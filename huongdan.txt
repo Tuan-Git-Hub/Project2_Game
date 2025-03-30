@@ -10,3 +10,9 @@ Fire, Trampoline: AnchorPoint đặt tại (0.5, 0) (chính giữa dưới cùng
 Một số hạn chế: 
 1. Fire và Trampoline được kích hoạt khi chạm vào mọi điểm. Nói cách khác: chưa xác định được vị trí cho việc kích hoạt
 2. Fan: chưa được cách được cách tác động vào nhân vật khi vào vùng ảnh hưởng. (chưa tìm được cách nhận sự kiện vào vùng ảnh hưởng)
+
+Quy ước về Bitmask:
+0x01: Người chơi
+0x02: Bẫy
+0x03: Tường
+0x04: vùng ảnh hưởng

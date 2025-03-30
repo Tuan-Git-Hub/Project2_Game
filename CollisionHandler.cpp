@@ -62,6 +62,18 @@ bool CollisionHandler::onContactBegin(ax::PhysicsContact& contact)
         }
     }
 
+    Node* affectZoneNode = nullptr;
+    if (bodyA->getCategoryBitmask() == 0x04)
+    {
+        AXLOG("Đi vào vùng ảnh hưởng");
+        affectZoneNode = bodyA->getNode();
+    }
+    else if (bodyB->getCategoryBitmask() == 0x04)
+    {
+        AXLOG("Đi vào vùng ảnh hưởng");
+        affectZoneNode = bodyB->getNode();
+    }
+
     return true;
 }
 

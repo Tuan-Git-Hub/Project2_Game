@@ -5,7 +5,7 @@ USING_NS_AX;
 
 Fire::Fire() : Trap()
 {
-    damage    = 0;
+    damage    = 1;
     isActive  = false;
     isDynamic = false;
 

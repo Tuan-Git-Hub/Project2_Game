@@ -50,7 +50,7 @@ void Fan::createWindZone()
     auto windBody = PhysicsBody::create();
     windBody->addShape(windShape);
     windBody->setDynamic(false);
-    windBody->setCategoryBitmask(0x04);     // Vùng cảm biến
+    windBody->setCategoryBitmask(0x04);     // Vùng cảm biến (0x04)
     windBody->setContactTestBitmask(0x01);  // Chỉ phát hiện va chạm với Player
 
     // 4. Tạo Node để chứa vùng gió
@@ -66,6 +66,8 @@ void Fan::dealDamage(ax::Node* player)
 {
     if (!isActive)
         return;
+
+    // AXLOG("ĐI VÀO VÙNG ẢNH HƯỞNG");
 
     AXLOG("Bẫy (Fan) gây %d sát thương!", damage);
 

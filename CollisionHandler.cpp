@@ -7,6 +7,11 @@ bool CollisionHandler::onContactBegin(ax::PhysicsContact& contact)
     auto bodyA = contact.getShapeA()->getBody();
     auto bodyB = contact.getShapeB()->getBody();
 
+    // Lấy dữ liệu va chạm
+    const ax::PhysicsContactData* contactData = contact.getContactData();
+    if (!contactData)
+        return false;
+
     AXLOG("Có va chạm xảy ra!");
 
     // Kiểm tra nếu Logo chạm Tường
@@ -33,11 +38,31 @@ bool CollisionHandler::onContactBegin(ax::PhysicsContact& contact)
 
     if (trapNode && passiveNode)
     {
-        // Lấy toạ độ điểm va chạm
-        ax::Vec2 contactPoint = contact.getContactData()->points[0];
+        // Vector pháp tuyến của va chạm
+        /*
+            Hướng của vector pháp tuyến (normal vector) trong một va chạm vật lý
+            luôn hướng ra khỏi bodyA và trỏ về phía body
+        B*/
+        ax::Vec2 normal = contactData->normal;
 
-        // Chuyển về toạ độ theo AnchorPoint
-        Vec2 _contactPoint = contactPoint - trapNode->getPosition();
+        
+        /*
+                *   Lấy hướng của vector pháp tuyến (normal)
+
+                        Nếu trapNode là bodyA, thì normal đã đúng hướng.
+
+                        Nếu trapNode là bodyB, thì normal cần đảo dấu.
+
+                    Sử dụng một biến Vec2 correctedNormal để chuẩn hóa hướng pháp tuyến.
+
+                        Nếu trapNode là bodyA, correctedNormal = normal.
+
+                        Nếu trapNode là bodyB, correctedNormal = -normal.
+                */
+       
+
+        // Chuẩn hóa hướng pháp tuyến dựa trên trapNode
+        Vec2 correctedNormal = (trapNode == bodyA->getNode()) ? normal : -normal;
 
         auto trap = dynamic_cast<Trap*>(trapNode);
         if (trap)
@@ -48,12 +73,49 @@ bool CollisionHandler::onContactBegin(ax::PhysicsContact& contact)
                 static_cast<Spike*>(trap)->dealDamage(passiveNode);
                 break;
             case (static_cast<int>(TrapType::Trampoline)):
-                static_cast<Trampoline*>(trap)->activateTrap();
-                static_cast<Trampoline*>(trap)->dealDamage(passiveNode);
+            {
+                // Lấy góc xoay của Trampoline
+                float rotation = static_cast<Trampoline*>(trap)->getRotation();
+
+                bool isValidCollision = false;
+
+                if (rotation == 0.0f)
+                {
+                    // Đứng thẳng, chỉ chấp nhận va chạm từ trên xuống
+                    isValidCollision = (correctedNormal.y > 0.98f);
+                }
+                else if (rotation == -90.0f)
+                {
+                    // Xoay trái 90°, chỉ chấp nhận va chạm từ bên phải
+                    isValidCollision = (correctedNormal.x < -0.98f);
+                }
+                else if (rotation == 90.0f)
+                {
+                    // Xoay phải 90°, chỉ chấp nhận va chạm từ bên trái
+                    isValidCollision = (correctedNormal.x > 0.98f);
+                }
+
+                if (isValidCollision)
+                {
+                    AXLOG("🟢 Kích hoạt Trampoline!");
+                    static_cast<Trampoline*>(trap)->activateTrap();
+                    static_cast<Trampoline*>(trap)->dealDamage(passiveNode);
+                }
+            }
                 break;
             case (static_cast<int>(TrapType::Fire)):
-                static_cast<Fire*>(trap)->activateTrap();
-                static_cast<Fire*>(trap)->dealDamage(passiveNode);
+            {
+                if (correctedNormal.y > 0.98f)
+                {
+                    AXLOG("🔥 Va chạm tại MẶT TRÊN của bẫy Fire!");
+                    static_cast<Fire*>(trap)->activateTrap();
+                    static_cast<Fire*>(trap)->dealDamage(passiveNode);
+                }
+            }
+                break;
+            case (static_cast<int>(TrapType::Fan)):
+                static_cast<Fan*>(trap)->activateTrap();
+                static_cast<Fan*>(trap)->dealDamage(passiveNode);
                 break;
             default:
                 trap->dealDamage(passiveNode);

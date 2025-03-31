@@ -158,7 +158,7 @@ bool PhysicsScene::init()
 
     // Fire Trap
     fireTrap = TrapFactory::createTrap(TrapType::Fire, "Traps/Fire/Fire_Off.png");
-    fireTrap->setPosition(Vec2(visibleSize.width * 3 / 4, spikeTrap->getContentSize().height / 2));
+    fireTrap->setPosition(Vec2(visibleSize.width * 3 / 4, 0));
     this->addChild(fireTrap);
 
     // SMI Sand
@@ -189,7 +189,7 @@ bool PhysicsScene::init()
 
     // Fan Trap
     fanTrap = dynamic_cast<Fan*>(TrapFactory::createTrap(TrapType::Fan, "Traps/Fan/Fan_Off.png"));
-    fanTrap->setPosition(Vec2(visibleSize.width * 2 / 3, visibleSize.height * 2 / 3));
+    fanTrap->setPosition(Vec2(visibleSize.width * 2 / 3, visibleSize.height * 1 / 2));
     fanTrap->activateTrap();
     this->addChild(fanTrap);
 

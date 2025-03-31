@@ -24,20 +24,20 @@ bool MobileButtons::init()
 
     // Tạo nút di chuyển sang trái
     auto leftMoveButton = SpriteManager::getInstance().createSprite("leftButton");
-    leftMoveButton->setPosition(200, 150);
-    leftMoveButton->setScale(4.0f);
+    leftMoveButton->setPosition(100, 60);
+    leftMoveButton->setScale(2.0f); 
     this->addChild(leftMoveButton);
 
     // Tạo nút di chuyển sang phải
     auto rightMoveButton = SpriteManager::getInstance().createSprite("rightButton");
-    rightMoveButton->setPosition(360, 150);
-    rightMoveButton->setScale(4.0f);
+    rightMoveButton->setPosition(180, 60);
+    rightMoveButton->setScale(2.0f);
     this->addChild(rightMoveButton);
 
     // Tạo nút di chuyển nhảy
     auto jumpMoveButton = SpriteManager::getInstance().createSprite("jumpButton");
-    jumpMoveButton->setPosition(1000, 150);
-    jumpMoveButton->setScale(4.0f);
+    jumpMoveButton->setPosition(500, 60);
+    jumpMoveButton->setScale(2.0f);
     this->addChild(jumpMoveButton);
 
     // Tạo EventListenerTouchOneByOne cho nút di chuyển sang trái

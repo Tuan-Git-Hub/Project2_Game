@@ -28,7 +28,7 @@ void MapManager::addPhysicBodyToTileMap(TMXTiledMap* map)
                     node->setPhysicsBody(bodyGround);
                     node->setTag(1);
 
-                    map->addChild(node, 0);
+                    map->addChild(node);
                 }
             }
         }

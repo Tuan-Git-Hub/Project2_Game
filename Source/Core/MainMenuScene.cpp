@@ -2,6 +2,7 @@
 #include "Utilities.h"
 #include "UIManager.h"
 
+
 using namespace ax;
 
 static int s_sceneID = 1000;
@@ -53,13 +54,17 @@ bool MainMenuScene::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
     /////////////////////////////
     // Hình background cho main menu scene
-    auto background = Label::createWithTTF("BACK GROUND MAIN MENU", "fonts/Marker Felt.ttf", 50);
-    background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 4 * 3 + origin.y));
-    this->addChild(background, 1);
+    // auto background = Label::createWithTTF("BACK GROUND MAIN MENU", "fonts/Marker Felt.ttf", 50);
+    // background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 4 * 3 + origin.y));
+    // this->addChild(background, 1);
+    auto background = UIManager::createBg();
+    this->addChild(background);
+
+
 
     // Bảng menu
     auto menuBoard = UIManager::createMainMenu();
-    this->addChild(menuBoard);
+    this->addChild(menuBoard, 1);
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
     scheduleUpdate();

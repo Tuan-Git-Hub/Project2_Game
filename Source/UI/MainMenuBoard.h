@@ -2,15 +2,21 @@
 #define __MAIN_MENU_BOARD_H__
 
 #include "axmol.h"
+#include "OptionsBoard.h"
+#include "LevelsBoard.h"
 
 class MainMenuBoard : public ax::Layer
 {
+private:
+    OptionsBoard* optionsBoard;
+    LevelsBoard* levelsBoard;
 public:
     static MainMenuBoard* createMainMenu();
-    virtual bool init();
+    bool init();
 
     void onNewGame(ax::Object* sender);
-    void onSettings(ax::Object* sender);
+    void onOptions(ax::Object* sender);
+    void onLevels(ax::Object* sender);
     void onExit(ax::Object* sender);
 };
 

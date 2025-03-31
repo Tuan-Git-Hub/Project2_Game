@@ -4,6 +4,7 @@
 #include "LevelManager.h"
 #include "Player.h"
 #include "CollisionManager.h"
+#include "CameraController.h"
 
 using namespace ax;
 
@@ -57,28 +58,51 @@ bool Level_1_Scene::init()
     /////////////////////////////
     // Hình background cho main menu scene
     auto background = Label::createWithTTF("BACK GROUND LEVEL 1", "fonts/Marker Felt.ttf", 50);
+    background->setPosition(Vec2(150, 160));
     background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 5 * 4 + origin.y));
     this->addChild(background, 1);
     
     // Tạo collision chung
     CollisionManager::init();
 
-
-
+    // Tạo UI
+    // Tạo nút bấm
+    auto uiLayer = Node::create(); // Tạo 1 node chứa UI
+    this->addChild(uiLayer, 100); // Thêm uiLayer vào scene với z-index = 100 để đảm bảo luôn ở trên các đối tượng khác
+    //uiLayer->setLocalZOrder(100);
+    
     // Tạo nút bấm
     auto buttons = UIManager::createMobileButtons();
-    this->addChild(buttons);
+    uiLayer->addChild(buttons); // Thêm vào node các UI cần
+
+    // Tạo camera cho UI
+    auto uiCamera = Camera::createOrthographic(640, 360, 1, 1000); // Tạo 1 camera trực giao
+    uiCamera->setCameraFlag(CameraFlag::USER1); // Gán cờ riêng cho camera này tách UI ra khỏi camera mặc định của game
+    uiCamera->setDepth(1); // Thêm độ sâu để sắp xếp thứ tự hiển thị những đối tượng của camera này, default = 0
+    this->addChild(uiCamera);
+    uiCamera->setPosition3D(this->getDefaultCamera()->getPosition3D()); // Đặt vị trí cameraUI mới
+    AXLOG("camera default: %f, %f, %f", this->getDefaultCamera()->getPosition3D().x, this->getDefaultCamera()->getPosition3D().y, this->getDefaultCamera()->getPosition3D().z);
+    this->getDefaultCamera()->setVisible(false);  // Ẩn camera mặc định  
+
+    uiLayer->setCameraMask((int)(CameraFlag::USER1), true); // Gán node này vào camera UI
+
+
 
     // Tạo map
     auto map = LevelManager::getInstance().loadLevel(LevelManager::Level::LEVEL_1);
-    map->setPosition(Vec2(150, 170));
+    map->setPosition(Vec2(70, 20));
     this->addChild(map);
 
     // Tạo player
     auto player1 = Player::create();
-    player1->setPosition(Vec2(250, 500));
+    player1->setPosition(Vec2(100, 200));
     this->addChild(player1);
 
+    // Tạo camera cho player
+    auto cameraPlayer = CameraController::create(player1);
+    this->addChild(cameraPlayer);
+
+    
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
     scheduleUpdate();

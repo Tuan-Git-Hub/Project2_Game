@@ -10,6 +10,7 @@ public:
     static SpriteManager& getInstance(); // Lấy singleton để đảm bảo các ảnh texture được load 1 lần, danh sách đã load là duy nhất
     void loadTexture(const std::string& name, const char* filePath); // Load ảnh image vào texture
     ax::Sprite* createSprite(const std::string& name); // Tạo Sprite từ texture
+    ax::Texture2D* getTextureByName(const std::string& name); // Lấy texture trong container
     void loadSpriteFrame(const char* filePath); // Load file vào SpriteFrameCache
     ax::Vector<ax::SpriteFrame*> createVectorSpriteFrame(const char* filePath, const char *format, int count); // Tạo ra 1 container chứa các SpriteFrame
 private:

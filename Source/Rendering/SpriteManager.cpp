@@ -35,6 +35,20 @@ Sprite* SpriteManager::createSprite(const std::string& name)
     return nullptr;
 }
 
+Texture2D* SpriteManager::getTextureByName(const std::string& name)
+{
+    if (texturesCache.find(name) != texturesCache.end()) // hàm find() để tìm kiếm name và nếu có sẽ trả một iterator trỏ đến phần tử tìm thấy, nếu không nó sẽ là end()
+    {
+        return texturesCache[name]; // tạo sprite từ texture đã load
+    }
+    else
+    {
+        AXLOG("Error! Please load the texture before");
+    }
+    return nullptr;
+}
+
+
 void SpriteManager::loadSpriteFrame(const char* filePath)
 {
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile(filePath);

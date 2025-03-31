@@ -311,7 +311,7 @@ void Player::update(float dt)
     this->setPosition(_position);
     //AXLOG("position: %f, %f, %f", _position.x, _position.y, this->getPositionY());
     //AXLOG("velocity: %f, %f", _velocity.x, _velocity.y);
-    AXLOG("velocity: %f, %f", this->getPhysicsBody()->getVelocity().x, this->getPhysicsBody()->getVelocity().y);
+    //AXLOG("velocity: %f, %f", this->getPhysicsBody()->getVelocity().x, this->getPhysicsBody()->getVelocity().y);
     //AXLOG("velocity: %f", this->getPhysicsBody()->getVelocityAtLocalPoint(_position).y);
 }
 

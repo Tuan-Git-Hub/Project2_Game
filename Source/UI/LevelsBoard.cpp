@@ -27,7 +27,7 @@ bool LevelsBoard::init()
     auto levelsboard = SpriteManager::getInstance().createSprite("levelsBoard");
     levelsboard->setPosition(Vec2(480, 195));
     this->addChild(levelsboard);
-
+    
     // Tạo các màn
     auto level01_normal = SpriteManager::getInstance().createSprite("level01");
     auto level01_selected = SpriteManager::getInstance().createSprite("level01");

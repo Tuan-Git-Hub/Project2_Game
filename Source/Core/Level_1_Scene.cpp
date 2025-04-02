@@ -30,24 +30,24 @@ bool Level_1_Scene::init()
     //getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
     // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-                                           AX_CALLBACK_1(Level_1_Scene::menuCloseCallback, this));
+    // auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
+    //                                        AX_CALLBACK_1(Level_1_Scene::menuCloseCallback, this));
 
-    if (closeItem == nullptr || closeItem->getContentSize().width <= 0 || closeItem->getContentSize().height <= 0)
-    {
-        Utilities::problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-    }
-    else
-    {
-        float x = safeOrigin.x + safeArea.size.width - closeItem->getContentSize().width / 2;
-        float y = safeOrigin.y + closeItem->getContentSize().height / 2;
-        closeItem->setPosition(Vec2(x, y));
-    }
+    // if (closeItem == nullptr || closeItem->getContentSize().width <= 0 || closeItem->getContentSize().height <= 0)
+    // {
+    //     Utilities::problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
+    // }
+    // else
+    // {
+    //     float x = safeOrigin.x + safeArea.size.width - closeItem->getContentSize().width / 2;
+    //     float y = safeOrigin.y + closeItem->getContentSize().height / 2;
+    //     closeItem->setPosition(Vec2(x, y));
+    // }
 
     // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
+    // auto menu = Menu::create(closeItem, NULL);
+    // menu->setPosition(Vec2::ZERO);
+    // this->addChild(menu, 1);
 
     // Some templates (uncomment what you  need)
     _touchListener                 = EventListenerTouchAllAtOnce::create();
@@ -66,7 +66,6 @@ bool Level_1_Scene::init()
     CollisionManager::init();
 
     // Tạo UI
-    // Tạo nút bấm
     auto uiLayer = Node::create(); // Tạo 1 node chứa UI
     this->addChild(uiLayer, 100); // Thêm uiLayer vào scene với z-index = 100 để đảm bảo luôn ở trên các đối tượng khác
     //uiLayer->setLocalZOrder(100);
@@ -81,7 +80,6 @@ bool Level_1_Scene::init()
     uiCamera->setDepth(1); // Thêm độ sâu để sắp xếp thứ tự hiển thị những đối tượng của camera này, default = 0
     this->addChild(uiCamera);
     uiCamera->setPosition3D(this->getDefaultCamera()->getPosition3D()); // Đặt vị trí cameraUI mới
-    AXLOG("camera default: %f, %f, %f", this->getDefaultCamera()->getPosition3D().x, this->getDefaultCamera()->getPosition3D().y, this->getDefaultCamera()->getPosition3D().z);
     this->getDefaultCamera()->setVisible(false);  // Ẩn camera mặc định  
 
     uiLayer->setCameraMask((int)(CameraFlag::USER1), true); // Gán node này vào camera UI

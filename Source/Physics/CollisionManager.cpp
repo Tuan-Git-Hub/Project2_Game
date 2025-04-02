@@ -22,4 +22,5 @@ bool CollisionManager::onContactBegin(PhysicsContact& contact)
     {
         return true;
     }
+    return true;
 }

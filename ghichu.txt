@@ -26,3 +26,4 @@ Hạn chế: Fan: chưa được cách được cách tác động vào nhân v�
 
 Bổ sung thêm RockHead, nhưng chưa có cơ chế gây sát thương bằng cách 'ép tường' (cái này anh tuấn xử lý nhé).
 Hạn chế: Chưa tìm được cách ghi nhận nhân vật vào/ra khỏi SensorZone (Dù đã có gợi ý từ chatGPT - xem tại thư mục SensorScene)
+Thay đổi: tạo một lớp mới là SensorZone (kế thừa từ ax::Node), rồi tạo một lớp là WineZone, kế thừa từ SensorZone, để đặt vào Fan (dưới danh nghĩa member và node con)

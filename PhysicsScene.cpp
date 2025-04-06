@@ -193,6 +193,46 @@ bool PhysicsScene::init()
     fanTrap->activateTrap();
     this->addChild(fanTrap);
 
+    /*auto windZone = fanTrap->getWindZone();
+    if (!windZone->getPhysicsBody()->isEnabled())
+    {
+        AXLOG("PhysicsBody bị tắt");
+        return false;
+    }
+
+    if (windZone->getParent() == nullptr)
+    {
+        AXLOG("windZone không nẳm trong Scene Graph");
+        return false;
+    }
+    else if (windZone->getParent() != fanTrap)
+    {
+        AXLOG("windZone không phải Node con của fanTrap");
+        return false;
+    }
+    else
+    {
+        AXLOG("WindZone size: %.2f x %.2f", windZone->getContentSize().width, windZone->getContentSize().height);
+        AXLOG("FanTrap pos: (%.1f, %.1f)", fanTrap->getPositionX(), fanTrap->getPositionY());
+        AXLOG("WindZone local pos: (%.1f, %.1f)", windZone->getPositionX(), windZone->getPositionY());
+
+        auto worldPos = windZone->getParent()->convertToWorldSpace(windZone->getPosition());
+        AXLOG("WindZone global pos: (%.1f, %.1f)", worldPos.x, worldPos.y);
+
+        int wzTag = windZone->getPhysicsBody()->getTag();
+        int wzBitMask = windZone->getPhysicsBody()->getCategoryBitmask();
+        AXLOG("WindZone tag: %d, WindZone bitmask: %d", wzTag, wzBitMask);
+    }*/
+
+    // Rock Head
+    rockHead =
+        dynamic_cast<RockHead*>(TrapFactory::createTrap(TrapType::RockHead, "Traps/Rock Head/RockHead_Idle.png"));
+    rockHead->setAmplitude(100.0f);
+    rockHead->setFrequency(1.0f);
+    rockHead->setPosition(Vec2(visibleSize.width * 1 / 8, rockHead->getContentSize().height/2));
+    rockHead->activateTrap("horizontal");
+    this->addChild(rockHead);
+
     /////////////////////////////
     // 3. add your codes below...
 
@@ -215,15 +255,25 @@ bool PhysicsScene::init()
     keyboardListener->onKeyReleased = AX_CALLBACK_2(PhysicsScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, sprite);
 
-    // Tạo EventListener để bắt va chạm
-    auto contactListener = ax::EventListenerPhysicsContact::create();
+    // Tạo EventListener để bắt va chạm với vật thể cứng
+    auto contactListener1 = ax::EventListenerPhysicsContact::create();
 
     // Xử lý khi va chạm xảy ra
-    contactListener->onContactBegin    = CollisionHandler::onContactBegin;
-    contactListener->onContactPreSolve = CollisionHandler::onContactPreSolve;
+    contactListener1->onContactBegin    = CollisionHandler::onContactBegin;
+    contactListener1->onContactPreSolve = CollisionHandler::onContactPreSolve;
 
     // Gán listener vào Scene
-    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener1, this);
+
+    // Tạo EventListener để bắt va chạm với sensorZone
+    auto contactListener2 = ax::EventListenerPhysicsContact::create();
+
+    // Xử lý khi va chạm xảy ra
+    contactListener2->onContactBegin    = CollisionHandler::onSensorContactBegin;
+    contactListener2->onContactSeparate = CollisionHandler::onSensorContactSeparate;
+
+    // Gán listener vào Scene
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener2, this);
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
     scheduleUpdate();
@@ -282,7 +332,7 @@ void PhysicsScene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Ev
 
 void PhysicsScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 {
-    AXLOG("onKeyPressed, keycode: %d", static_cast<int>(code));
+    // AXLOG("onKeyPressed, keycode: %d", static_cast<int>(code));
 
     auto node = event->getCurrentTarget();
     if (!node)
@@ -334,7 +384,8 @@ void PhysicsScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 
 void PhysicsScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 {
-    AXLOG("onKeyReleased, keycode: %d", static_cast<int>(code));
+    // AXLOG("onKeyReleased, keycode: %d", static_cast<int>(code));
+    return;
 }
 
 

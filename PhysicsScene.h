@@ -35,6 +35,8 @@
 #include "SandMudIce.h"
 #include "Fire.h"
 #include "Fan.h"
+#include "WindZone.h"
+#include "RockHead.h"
 
 
 class PhysicsScene : public ax::Scene
@@ -71,7 +73,10 @@ private:
     Trap* ice;
 
     Saw* sawTrap;
-    Fan* fanTrap;    
+    Fan* fanTrap;
+    // WindZone* windZone;
+
+    RockHead* rockHead;
 };
 
 #endif  // __MAIN_SCENE_H__

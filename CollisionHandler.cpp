@@ -14,6 +14,8 @@ bool CollisionHandler::onContactBegin(ax::PhysicsContact& contact)
 
     AXLOG("Có va chạm xảy ra!");
 
+    // 1. Xử lý va chạm đối với 'vật thể cứng'
+
     // Kiểm tra nếu Logo chạm Tường
     if ((bodyA->getCategoryBitmask() == 0x01 && bodyB->getCategoryBitmask() == 0x03) ||
         (bodyA->getCategoryBitmask() == 0x03 && bodyB->getCategoryBitmask() == 0x01))
@@ -124,18 +126,6 @@ bool CollisionHandler::onContactBegin(ax::PhysicsContact& contact)
         }
     }
 
-    Node* affectZoneNode = nullptr;
-    if (bodyA->getCategoryBitmask() == 0x04)
-    {
-        AXLOG("Đi vào vùng ảnh hưởng");
-        affectZoneNode = bodyA->getNode();
-    }
-    else if (bodyB->getCategoryBitmask() == 0x04)
-    {
-        AXLOG("Đi vào vùng ảnh hưởng");
-        affectZoneNode = bodyB->getNode();
-    }
-
     return true;
 }
 
@@ -176,5 +166,95 @@ bool CollisionHandler::onContactPreSolve(ax::PhysicsContact& contact, ax::Physic
             }
         }
     }
+    return true;
+}
+
+bool CollisionHandler::onSensorContactBegin(ax::PhysicsContact& contact)
+{
+    auto shapeA = contact.getShapeA();
+    auto shapeB = contact.getShapeB();
+
+    auto bodyA = shapeA->getBody();
+    auto bodyB = shapeB->getBody();
+
+    // 2. Xử lý va chạm với SensorZone (ở đây là WindZone có bitmask = 0x04 và tag = WindZone)
+    Node* sensorZoneNode = nullptr;
+    Node* otherNode      = nullptr;
+
+    if (bodyA->getCategoryBitmask() == 0x04)
+    {
+        AXLOG("Vật ĐI VÀO TRONG SensorZone");
+        sensorZoneNode = bodyA->getNode();
+        otherNode      = bodyB->getNode();
+    }
+    else if (bodyB->getCategoryBitmask() == 0x04)
+    {
+        AXLOG("Vật ĐI VÀO TRONG SensorZone");
+        sensorZoneNode = bodyB->getNode();
+        otherNode      = bodyA->getNode();
+    }
+   /* else if (bodyA->getCategoryBitmask() != 0x04 && bodyB->getCategoryBitmask() != 0x04)
+        return false;*/
+
+    if (sensorZoneNode && otherNode)
+    {
+        if (sensorZoneNode->getTag() == static_cast<int>(TrapType::WindZone))
+        {
+            AXLOG("Vật thể đi vào trong windZone");
+            auto windZone = dynamic_cast<WindZone*>(sensorZoneNode);
+            if (windZone)
+            {
+                windZone->onEnter(otherNode);
+            }
+        }
+    }
+    /*else
+        return false;*/
+
+    return true;
+}
+
+bool CollisionHandler::onSensorContactSeparate(ax::PhysicsContact& contact)
+{
+    auto shapeA = contact.getShapeA();
+    auto shapeB = contact.getShapeB();
+
+    auto bodyA = shapeA->getBody();
+    auto bodyB = shapeB->getBody();
+
+    // 2. Xử lý va chạm với SensorZone (ở đây là WindZone có bitmask = 0x04 và tag = WindZone)
+    Node* sensorZoneNode = nullptr;
+    Node* otherNode      = nullptr;
+
+    if (bodyA->getCategoryBitmask() == 0x04)
+    {
+        AXLOG("Vật ĐI RA KHỎI SensorZone");
+        sensorZoneNode = bodyA->getNode();
+        otherNode      = bodyB->getNode();
+    }
+    else if (bodyB->getCategoryBitmask() == 0x04)
+    {
+        AXLOG("Vật ĐI RA KHỎI SensorZone");
+        sensorZoneNode = bodyB->getNode();
+        otherNode      = bodyA->getNode();
+    }
+    /*else if (bodyA->getCategoryBitmask() != 0x04 && bodyB->getCategoryBitmask() != 0x04)
+        return false;*/
+
+    if (sensorZoneNode != nullptr && otherNode != nullptr)
+    {
+        if (sensorZoneNode->getTag() == static_cast<int>(TrapType::WindZone))
+        {
+            AXLOG("Vật thể đi vào trong windZone");
+            auto windZone = dynamic_cast<WindZone*>(sensorZoneNode);
+            if (windZone)
+            {
+                windZone->onExit(otherNode);
+            }
+        }
+    }
+    /*else
+        return false;*/
+
     return true;
 }

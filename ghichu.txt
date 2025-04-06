@@ -15,9 +15,14 @@ Quy ước về Bitmask:
 0x01: Người chơi
 0x02: Bẫy
 0x03: Tường
-0x04: vùng ảnh hưởng
+0x04: SensorZone (vùng cảm biến)
 
 31/03/2025
 
 Một số cải thiện: đã xác định được vị trí cho việc kích hoạt cho Fire và Trampoline
 Hạn chế: Fan: chưa được cách được cách tác động vào nhân vật khi vào vùng ảnh hưởng. (chưa tìm được cách nhận sự kiện vào vùng ảnh hưởng)
+
+06/04/2025:
+
+Bổ sung thêm RockHead, nhưng chưa có cơ chế gây sát thương bằng cách 'ép tường' (cái này anh tuấn xử lý nhé).
+Hạn chế: Chưa tìm được cách ghi nhận nhân vật vào/ra khỏi SensorZone (Dù đã có gợi ý từ chatGPT - xem tại thư mục SensorScene)

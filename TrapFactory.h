@@ -12,6 +12,7 @@
 #include "SandMudIce.h"
 #include "Fire.h"
 #include "Fan.h"
+#include "RockHead.h"
 
 class TrapFactory
 {

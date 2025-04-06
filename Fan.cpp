@@ -8,6 +8,7 @@ Fan::Fan() : Trap()
     damage    = 0;
     isActive  = false;
     isDynamic = false;
+    windZone  = nullptr;
 
     AXLOG("Bẫy (Fan) tạo thành công");
 }
@@ -20,6 +21,15 @@ bool Fan::init(const std::string& spriteFile)
 {
     if (!Sprite::initWithFile(spriteFile))  // Thay đổi từ Node::init() sang Sprite::initWithFile()
         return false;
+
+    auto windSize = Size(this->getContentSize().width, 100);  // kích thước vùng gió (tuỳ bạn)
+    Vec2 forceDir = DeftForceVector;                          // có thể tuỳ chỉnh theo chiều quay quạt
+
+    windZone = new WindZone(windSize, forceDir);
+    windZone->setAnchorPoint(Vec2(0.5, 0));
+    windZone->setPosition(this->getContentSize().width / 2,
+                          this->getContentSize().height);  // ví dụ: vùng gió phía trên
+
 
     // Đặt AnchorPoint tại chính giữa, dưới chân (nếu Fan hướng lên trên)
     this->setAnchorPoint(Vec2(0.5, 0));
@@ -37,30 +47,12 @@ bool Fan::init(const std::string& spriteFile)
         this->setPhysicsBody(trapBody);
     }
     this->setTag(static_cast<int>(TrapType::Fan));
+
+    this->addChild(windZone);
+
     return true;
 }
 
-void Fan::createWindZone()
-{
-    // 2. Tạo vùng gió (PhysicsShape cảm biến)
-    auto windShape = PhysicsShapeBox::create(Size(this->getContentSize().width, 100));  // Chiều cao vùng ảnh hưởng là 100
-    windShape->setSensor(true);                                                 // Đặt thành cảm biến
-
-    // 3. Tạo PhysicsBody riêng cho vùng ảnh hưởng
-    auto windBody = PhysicsBody::create();
-    windBody->addShape(windShape);
-    windBody->setDynamic(false);
-    windBody->setCategoryBitmask(0x04);     // Vùng cảm biến (0x04)
-    windBody->setContactTestBitmask(0x01);  // Chỉ phát hiện va chạm với Player
-
-    // 4. Tạo Node để chứa vùng gió
-    windZone = Node::create();
-    windZone->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2 + 50));  // Đặt phía trên quạt
-    windZone->setPhysicsBody(windBody);
-    windZone->setTag(static_cast<int>(TrapType::Fan));
-    this->addChild(windZone);
-
-}
 
 void Fan::dealDamage(ax::Node* player)
 {
@@ -69,18 +61,18 @@ void Fan::dealDamage(ax::Node* player)
 
     // AXLOG("ĐI VÀO VÙNG ẢNH HƯỞNG");
 
-    AXLOG("Bẫy (Fan) gây %d sát thương!", damage);
+    AXLOG("Chạm vào bẫy quạt");
 
     // Kiểm tra nếu player có PhysicsBody
-    auto playerBody = player->getPhysicsBody();
+    /*auto playerBody = player->getPhysicsBody();
     if (playerBody)
     {
-        playerBody->applyForce(DeftForceVector);
+        windZone->doAction();
     }
     else
     {
         AXLOG("Cảnh báo: Player không có PhysicsBody! Không thể tác động lực.");
-    }
+    }*/
 
     // Hiện chưa tìm được cách xử lý sự kiện khi nhân vật vào vùng ảnh hưởng
 }
@@ -127,7 +119,7 @@ void Fan::activateTrap()
     // Chạy Animation
     this->runAction(RepeatForever::create(animate));
 
-    this->createWindZone();
+    windZone->doAction();
 
 }
 
@@ -142,4 +134,9 @@ void Fan::deactivateTrap()
     this->stopAllActions();
 
     this->setTexture("Traps/Fan/Fan_Off.png");
+}
+
+WindZone* Fan::getWindZone()
+{
+    return windZone;
 }

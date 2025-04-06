@@ -1,24 +1,24 @@
 #pragma once
 
-#ifndef __SAW_H__
-#define __SAW_H__
+#ifndef __ROCK_HEAD_H__
+#define __ROCK_HEAD_H__
 
 #include "axmol.h"
 #include <cmath>
 #include "Trap.h"
 
-class Saw : public Trap
+class RockHead : public Trap
 {
 protected:
     float amplitude;     // Biên độ dao động (độ lệch lớn nhất)
     float frequency;     // Tần số dao động (số lần lặp lại mỗi giây)
 
 public:
-    Saw();
-    ~Saw();
+    RockHead();
+    ~RockHead();
     bool init(const std::string& spriteFile) override;
     void dealDamage(ax::Node* player) override;  
-    void activateTrap() override;
+    void activateTrap(std::string axis);
     void deactivateTrap() override;
 
     void setAmplitude(float _amp);
@@ -27,12 +27,12 @@ public:
     void setFrequency(float _freq);
     float getFrequency();
 
-    void runAnimation();
+    ax::Animation* getAnimation(std::string animName);
 
-    void startOscillation();
-    void stopOscillation();
+    void startBehavior(std::string axis);
+    void stopBehavior();
 
-    //void checkWallCollision();
+    // void checkWallCollision();
 };
 
-#endif  // !__SAW_H__
+#endif  // !__ROCK_HEAD_H__

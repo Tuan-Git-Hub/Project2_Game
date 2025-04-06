@@ -41,6 +41,13 @@ Trap* TrapFactory::createTrap(TrapType _trapType, const std::string& spriteFile)
             return certainTrap;
             break;
         }
+        case TrapType::RockHead:
+        {
+            RockHead* certainTrap = new RockHead();
+            certainTrap->init(spriteFile);
+            return certainTrap;
+            break;
+        }
         default:
         {
             AXLOG("Không tạo được bẫy, trả về null pointer");

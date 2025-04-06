@@ -14,6 +14,9 @@ class CollisionHandler
 public:
     static bool onContactBegin(ax::PhysicsContact& contact);
     static bool onContactPreSolve(ax::PhysicsContact& contact, ax::PhysicsContactPreSolve& solve);
+
+    static bool onSensorContactBegin(ax::PhysicsContact& contact);
+    static bool onSensorContactSeparate(ax::PhysicsContact& contact);
 };
 
 #endif  // COLLISION_HANDLER_H

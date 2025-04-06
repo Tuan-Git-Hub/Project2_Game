@@ -5,12 +5,13 @@
 
 #    include "axmol.h"
 #    include "Trap.h"
+#    include "WindZone.h"
 
 class Fan : public Trap
 {
 protected:
     ax::Vec2 DeftForceVector = ax::Vec2(0, 300.0f);
-    ax::Node* windZone;
+    WindZone* windZone;
 
 public:
     Fan();
@@ -20,7 +21,8 @@ public:
     void activateTrap() override;
     void deactivateTrap() override;
 
-    void createWindZone();
+    WindZone* getWindZone();
+
 };
 
 #endif  // !__FAN_H__

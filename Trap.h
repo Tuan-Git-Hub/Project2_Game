@@ -13,7 +13,7 @@ enum class TrapType : int
     Trampoline = 3,
     Saw = 4,
     SandMudIce = 5,
-    Fan = 6,
+    Fan = 6, WindZone=61,
     RockHead = 7
 };
 

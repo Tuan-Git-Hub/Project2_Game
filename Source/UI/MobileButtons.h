@@ -5,24 +5,27 @@
 
 class MobileButtons : public ax::Node
 {
+private:
+    static MobileButtons* instance;
+    MobileButtons() {}; // Đảm bảo rằng chỉ có thể tạo ra một instance duy nhất
+    MobileButtons(const MobileButtons&) = delete; // Ngăn sao chép
+    MobileButtons& operator=(const MobileButtons&) = delete; // Ngăn gán object
+
 public:
-    static MobileButtons* createMobileButtons();
+    static MobileButtons* getInstance();
     bool init();
     
-    static std::function<void()> leftMove;
-    static std::function<void()> rightMove;
-    static std::function<void()> jumpMove;
-    static std::function<void()> stopMove;
+    std::function<void()> leftMove;
+    std::function<void()> rightMove;
+    std::function<void()> jumpMove;
+    std::function<void()> stopMove;
 
     bool isHoldingMoveLeft = false;
     bool isHoldingMoveRight = false;
     bool isHoldingJump = false;
 
     void update(float dt);
-// private:
-//     void leftMove(ax::Object* sender);
-//     void rightMove(ax::Object* sender);
-//     void jumpMove(ax::Object* sender);
+    static void deleteInstance();
 };
 
 

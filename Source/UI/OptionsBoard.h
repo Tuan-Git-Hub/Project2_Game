@@ -5,12 +5,12 @@
 
 class OptionsBoard : public ax::Layer
 {
-private:
-    bool isMuteMusic = false;
-    bool isMuteSFX = false;
-    
+private:   
     ax::Sprite* musicONOFF;
     ax::Sprite* sfxONOFF;
+
+    bool isMuteMusic = false;
+    bool isMuteSFX = false;
 
 public:
     static OptionsBoard* createOptionsBoard();

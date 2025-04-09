@@ -2,6 +2,7 @@
 #include "Utilities.h"
 #include "SpriteManager.h"
 #include "MobileButtons.h"
+#include "HeartLives.h"
 
 using namespace ax;
 
@@ -25,8 +26,14 @@ bool Player::init()
     {
         return false;
     }
+    // Load các file ảnh vào cache
+    SpriteManager::getInstance().loadSpriteFrames({ fileImage_idle_player, fileImage_run_player, fileImage_doublejump_player, fileImage_walljump_player, fileImage_hit_player });
+    SpriteManager::getInstance().loadTextures({
+        { "playerJump", fileImage_jump_player },
+        { "playerFall", fileImage_fall_player } 
+    });
     // Tạo hành động đứng yên Idle
-    auto idleFrames = SpriteManager::getInstance().createVectorSpriteFrame(fileImage_idle_player, "Player_1_Idle_%d.png", 11);
+    auto idleFrames = SpriteManager::getInstance().createVectorSpriteFrame("Player_1_Idle_%d.png", 11);
     this->initWithSpriteFrame(idleFrames.front());
     auto idleAnimation = Animation::createWithSpriteFrames(idleFrames, 1.0f/20);
     this->_idleAction =  RepeatForever::create(Animate::create(idleAnimation));
@@ -35,13 +42,13 @@ bool Player::init()
     this->runAction(_idleAction);
 
     // Tạo hành động di chuyển Run
-    auto runFrames = SpriteManager::getInstance().createVectorSpriteFrame(fileImage_run_player, "Player_1_Run_%d.png", 12);
+    auto runFrames = SpriteManager::getInstance().createVectorSpriteFrame("Player_1_Run_%d.png", 12);
     auto runAnimation = Animation::createWithSpriteFrames(runFrames, 1.0f/20);
     this->_runAction = RepeatForever::create(Animate::create(runAnimation));
     _runAction->retain();
 
     // Tạo hành động nhảy Jump
-    auto jumpFrames = SpriteFrame::create(fileImage_jump_player, Rect(0, 0, 32, 32));
+    auto jumpFrames = SpriteFrame::createWithTexture(SpriteManager::getInstance().getTextureByName("playerJump"), Rect(0, 0, 32, 32));
     if (!jumpFrames)
     {
         Utilities::problemLoading(fileImage_jump_player);
@@ -52,7 +59,7 @@ bool Player::init()
     _jumpAction->retain();
 
     // Tạo hành động Fall
-    auto fallFrames = SpriteFrame::create(fileImage_fall_player, Rect(0, 0, 32, 32));
+    auto fallFrames = SpriteFrame::createWithTexture(SpriteManager::getInstance().getTextureByName("playerFall"), Rect(0, 0, 32, 32));
     if (!fallFrames)
     {
         Utilities::problemLoading(fileImage_fall_player);
@@ -63,7 +70,7 @@ bool Player::init()
     _fallAction->retain();
 
     // Tạo hành động double jumpe
-    auto doubleJumpFrames = SpriteManager::getInstance().createVectorSpriteFrame(fileImage_doublejump_player, "Player_1_DoubleJump_%d.png", 6);
+    auto doubleJumpFrames = SpriteManager::getInstance().createVectorSpriteFrame("Player_1_DoubleJump_%d.png", 6);
     doubleJumpFrames.pushBack(fallFrames);
     auto doubleJumpAnimation = Animation::createWithSpriteFrames(doubleJumpFrames, 1.0f/24);
     this->_doublejumpAction = Sequence::create(
@@ -74,13 +81,13 @@ bool Player::init()
     _doublejumpAction->retain();
 
     // Tạo hành động wall jumpe
-    auto wallJumpFrames = SpriteManager::getInstance().createVectorSpriteFrame(fileImage_walljump_player, "Player_1_WallJump_%d.png", 5);
+    auto wallJumpFrames = SpriteManager::getInstance().createVectorSpriteFrame("Player_1_WallJump_%d.png", 5);
     auto wallJumpAnimation = Animation::createWithSpriteFrames(wallJumpFrames, 1.0f/15);
     this->_walljumpAction = RepeatForever::create(Animate::create(wallJumpAnimation));
     _walljumpAction->retain();
 
     // Tạo hành động hit
-    auto hitFrames = SpriteManager::getInstance().createVectorSpriteFrame(fileImage_hit_player, "Player_1_Hit_%d.png", 7);
+    auto hitFrames = SpriteManager::getInstance().createVectorSpriteFrame("Player_1_Hit_%d.png", 7);
     auto hitAnimation = Animation::createWithSpriteFrames(hitFrames, 1.0f/14);
     this->_hitAction = Sequence::create(
         Repeat::create(Animate::create(hitAnimation), 3),
@@ -102,10 +109,10 @@ bool Player::init()
     this->setTag(2); // Gán tag để nhận diện Player trong va chạm
 
     // Gán sự kiện chạm
-    MobileButtons::leftMove = [this]() { this->onLeftKeyPressed(); };
-    MobileButtons::rightMove = [this]() { this->onRightKeyPressed(); };
-    MobileButtons::jumpMove = [this]() { this->onJumpKeyPressed(); };
-    MobileButtons::stopMove = [this]() { this->onKeyReleased(); };
+    MobileButtons::getInstance()->leftMove = [this]() { this->onLeftKeyPressed(); };
+    MobileButtons::getInstance()->rightMove = [this]() { this->onRightKeyPressed(); };
+    MobileButtons::getInstance()->jumpMove = [this]() { this->onJumpKeyPressed(); };
+    MobileButtons::getInstance()->stopMove = [this]() { this->onKeyReleased(); };
 
     // Tạo sự kiện listener cho riêng player
     auto contactListenerPlayer = EventListenerPhysicsContact::create();
@@ -208,7 +215,7 @@ void Player::wall_jump_Right()
 
 void Player::hit()
 {
-    _hp -= 1;
+    _hp--;
     _velocity = {-50, 0};
     setState(PlayerState::Hit);
 }
@@ -291,6 +298,19 @@ bool Player::onContactBegin(PhysicsContact& contact)
         this->idle();
     }
     return true;
+}
+
+// Khi thêm HP
+void Player::add_A_HP()
+{
+    HeartLives::getInstance()->addAHeart();
+    this->_hp++;
+}
+
+void Player::delete_A_HP()
+{
+    HeartLives::getInstance()->deleteAHeart();
+    this->_hp--;
 }
 
 // Hàm update

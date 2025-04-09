@@ -56,6 +56,7 @@ bool MainMenuBoard::init()
     optionsBoard = OptionsBoard::createOptionsBoard();
     optionsBoard->setPosition(Vec2(1000, 1000));
     this->addChild(optionsBoard);
+    
 
     // Tạo level board
     levelsBoard = LevelsBoard::createLevelsBoard();

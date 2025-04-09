@@ -27,24 +27,24 @@ bool MainMenuScene::init()
     //    you may modify it.
 
     // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-                                           AX_CALLBACK_1(MainMenuScene::menuCloseCallback, this));
+    // auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
+    //                                        AX_CALLBACK_1(MainMenuScene::menuCloseCallback, this));
 
-    if (closeItem == nullptr || closeItem->getContentSize().width <= 0 || closeItem->getContentSize().height <= 0)
-    {
-        Utilities::problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-    }
-    else
-    {
-        float x = safeOrigin.x + safeArea.size.width - closeItem->getContentSize().width / 2;
-        float y = safeOrigin.y + closeItem->getContentSize().height / 2;
-        closeItem->setPosition(Vec2(x, y));
-    }
+    // if (closeItem == nullptr || closeItem->getContentSize().width <= 0 || closeItem->getContentSize().height <= 0)
+    // {
+    //     Utilities::problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
+    // }
+    // else
+    // {
+    //     float x = safeOrigin.x + safeArea.size.width - closeItem->getContentSize().width / 2;
+    //     float y = safeOrigin.y + closeItem->getContentSize().height / 2;
+    //     closeItem->setPosition(Vec2(x, y));
+    // }
 
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
+    // // create menu, it's an autorelease object
+    // auto menu = Menu::create(closeItem, NULL);
+    // menu->setPosition(Vec2::ZERO);
+    // this->addChild(menu, 1);
 
     // Some templates (uncomment what you  need)
     _touchListener                 = EventListenerTouchAllAtOnce::create();
@@ -53,16 +53,15 @@ bool MainMenuScene::init()
     _touchListener->onTouchesEnded = AX_CALLBACK_2(MainMenuScene::onTouchesEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
     /////////////////////////////
+    // Load texture và sprite frame 1 lượt
+    UIManager::loadTextures_SpriteFrames();
     // Hình background cho main menu scene
-    // auto background = Label::createWithTTF("BACK GROUND MAIN MENU", "fonts/Marker Felt.ttf", 50);
-    // background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 4 * 3 + origin.y));
-    // this->addChild(background, 1);
+    AXLOG("background");
     auto background = UIManager::createBg();
     this->addChild(background);
 
-
-
     // Bảng menu
+    AXLOG("menuBoard");
     auto menuBoard = UIManager::createMainMenu();
     this->addChild(menuBoard, 1);
 

@@ -9,16 +9,27 @@ SpriteManager& SpriteManager::getInstance()
     return instance;
 }
 
-void SpriteManager::loadTexture(const std::string& name, const char* filePath)
+void SpriteManager::loadTextures(const std::vector<std::pair<std::string, const char*>>& textures)
 {
-    auto texture = Director::getInstance()->getTextureCache()->addImage(filePath); // Lấy ảnh theo đường dẫn
-    if (!texture)
+    auto texCache = Director::getInstance()->getTextureCache();
+    for (const auto& [name, filePath] : textures)  // Lặp qua danh sách ảnh
     {
-        Utilities::problemLoading(filePath); // Nếu có lỗi sẽ báo
-    }
-    else
-    {
-        texturesCache[name] = texture; // Lưu lại vào container unordered_map
+        // Kiểm tra đường dẫn hợp lệ
+        if (!filePath || std::strlen(filePath) == 0) 
+        {
+            Utilities::problemLoading("(file: null)"); // Nếu có lỗi sẽ báo
+            continue;
+        }
+
+        auto texture = texCache->addImage(filePath); // Load texture vào cache
+        if (!texture)
+        {
+            Utilities::problemLoading(filePath); // Nếu có lỗi sẽ báo
+        }
+        else
+        {
+            texturesCache[name] = texture; // Lưu lại vào container unordered_map
+        }
     }
 }
 
@@ -37,9 +48,9 @@ Sprite* SpriteManager::createSprite(const std::string& name)
 
 Texture2D* SpriteManager::getTextureByName(const std::string& name)
 {
-    if (texturesCache.find(name) != texturesCache.end()) // hàm find() để tìm kiếm name và nếu có sẽ trả một iterator trỏ đến phần tử tìm thấy, nếu không nó sẽ là end()
+    if (texturesCache.find(name) != texturesCache.end())
     {
-        return texturesCache[name]; // tạo sprite từ texture đã load
+        return texturesCache[name];
     }
     else
     {
@@ -49,14 +60,23 @@ Texture2D* SpriteManager::getTextureByName(const std::string& name)
 }
 
 
-void SpriteManager::loadSpriteFrame(const char* filePath)
+void SpriteManager::loadSpriteFrames(const std::vector<const char*>& fPaths)
 {
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile(filePath);
+    auto sfCache = SpriteFrameCache::getInstance();
+    for (const char* filePath : fPaths)
+    {
+        // Kiểm tra đường dẫn hợp lệ
+        if (!filePath || std::strlen(filePath) == 0) 
+        {
+            Utilities::problemLoading("(file: null)"); // Nếu có lỗi sẽ báo
+        }
+        else
+            sfCache->addSpriteFramesWithFile(filePath);
+    }
 }
 
-Vector<SpriteFrame*> SpriteManager::createVectorSpriteFrame(const char* filePath, const char *format, int count)
+Vector<SpriteFrame*> SpriteManager::createVectorSpriteFrame(const char *format, int count)
 {
-    loadSpriteFrame(filePath);
     auto spriteCache = SpriteFrameCache::getInstance();
     Vector<SpriteFrame*> animFrames;
     char str[100];
@@ -70,4 +90,20 @@ Vector<SpriteFrame*> SpriteManager::createVectorSpriteFrame(const char* filePath
             Utilities::problemLoading(str); // Gọi hàm báo lỗi nếu không load được ảnh
     }
     return animFrames;
+}
+
+Sprite* SpriteManager::getScreenshot(Scene* scene)
+{
+    auto winSize = Director::getInstance()->getWinSize();
+    auto renderTexture = RenderTexture::create(winSize.width, winSize.height);
+    renderTexture->begin();
+    scene->visit();  // 'this' là Scene hiện tại
+    renderTexture->end();
+
+    // Đảm bảo hình được cập nhật ngay
+    Director::getInstance()->getRenderer()->render();
+
+    // Lấy sprite từ RenderTexture
+    auto screenshotSprite = renderTexture->getSprite();
+    return screenshotSprite;
 }

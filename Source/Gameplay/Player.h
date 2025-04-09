@@ -70,6 +70,10 @@ class Player : public ax::Sprite
         void onKeyReleased();
         bool onContactBegin(ax::PhysicsContact& contact);
 
+        int getHP_Player() { return _hp; };
+        void add_A_HP();
+        void delete_A_HP();
+
 };
 
 #endif  // __PLAYER_H__

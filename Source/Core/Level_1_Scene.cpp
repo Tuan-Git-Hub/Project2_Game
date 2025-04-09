@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "CollisionManager.h"
 #include "CameraController.h"
+#include "GameOverScene.h"
 
 using namespace ax;
 
@@ -56,36 +57,13 @@ bool Level_1_Scene::init()
     _touchListener->onTouchesEnded = AX_CALLBACK_2(Level_1_Scene::onTouchesEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
     /////////////////////////////
+
     // Hình background cho main menu scene
-    auto background = Label::createWithTTF("BACK GROUND LEVEL 1", "fonts/Marker Felt.ttf", 50);
-    background->setPosition(Vec2(150, 160));
-    background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 5 * 4 + origin.y));
-    this->addChild(background, 1);
+    // auto background = Label::createWithTTF("BACK GROUND LEVEL 1", "fonts/Marker Felt.ttf", 50);
+    // background->setPosition(Vec2(150, 160));
+    // background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 5 * 4 + origin.y));
+    // this->addChild(background, 1);
     
-    // Tạo collision chung
-    CollisionManager::init();
-
-    // Tạo UI
-    auto uiLayer = Node::create(); // Tạo 1 node chứa UI
-    this->addChild(uiLayer, 100); // Thêm uiLayer vào scene với z-index = 100 để đảm bảo luôn ở trên các đối tượng khác
-    //uiLayer->setLocalZOrder(100);
-    
-    // Tạo nút bấm
-    auto buttons = UIManager::createMobileButtons();
-    uiLayer->addChild(buttons); // Thêm vào node các UI cần
-
-    // Tạo camera cho UI
-    auto uiCamera = Camera::createOrthographic(640, 360, 1, 1000); // Tạo 1 camera trực giao
-    uiCamera->setCameraFlag(CameraFlag::USER1); // Gán cờ riêng cho camera này tách UI ra khỏi camera mặc định của game
-    uiCamera->setDepth(1); // Thêm độ sâu để sắp xếp thứ tự hiển thị những đối tượng của camera này, default = 0
-    this->addChild(uiCamera);
-    uiCamera->setPosition3D(this->getDefaultCamera()->getPosition3D()); // Đặt vị trí cameraUI mới
-    this->getDefaultCamera()->setVisible(false);  // Ẩn camera mặc định  
-
-    uiLayer->setCameraMask((int)(CameraFlag::USER1), true); // Gán node này vào camera UI
-
-
-
     // Tạo map
     auto map = LevelManager::getInstance().loadLevel(LevelManager::Level::LEVEL_1);
     map->setPosition(Vec2(70, 20));
@@ -100,7 +78,51 @@ bool Level_1_Scene::init()
     auto cameraPlayer = CameraController::create(player1);
     this->addChild(cameraPlayer);
 
+    // Tạo collision chung
+    CollisionManager::init();
+
+    // Tạo UI
+    auto uiLayer = Node::create(); // Tạo 1 node chứa UI
+    this->addChild(uiLayer, 100); // Thêm uiLayer vào scene với z-index = 100 để đảm bảo luôn ở trên các đối tượng khác
+    //uiLayer->setLocalZOrder(100);
     
+    // Tạo nút bấm
+    auto buttons = UIManager::getInstanceMobileButtons();
+    uiLayer->addChild(buttons); // Thêm vào node các UI cần
+    // Tạo máu nhân vật
+    auto heartLives = UIManager::getInstanceHeartLives();
+    uiLayer->addChild(heartLives);
+    // Tạo điểm số
+    auto scorePlayer = UIManager::getInstanceScore();
+    uiLayer->addChild(scorePlayer);
+    // Tạo bộ đếm thời gian
+    auto timer = UIManager::createGameTimer(GameTimer::Level::LEVEL_1);
+    timer->timeOut = [this]() { this->gameOver(); }; // gán call back
+    uiLayer->addChild(timer);
+    // Tạo setting in game
+    auto settingINGame = UIManager::createSettingBoardInGame();
+    uiLayer->addChild(settingINGame);
+
+    // Tạo camera cho UI
+    auto uiCamera = Camera::createOrthographic(640, 360, 1, 1000); // Tạo 1 camera trực giao
+    uiCamera->setCameraFlag(CameraFlag::USER1); // Gán cờ riêng cho camera này tách UI ra khỏi camera mặc định của game
+    uiCamera->setDepth(1); // Thêm độ sâu để sắp xếp thứ tự hiển thị những đối tượng của camera này, default = 0
+    this->addChild(uiCamera);
+    uiCamera->setPosition3D(this->getDefaultCamera()->getPosition3D()); // Đặt vị trí cameraUI mới
+    this->getDefaultCamera()->setVisible(false);  // Ẩn camera mặc định  
+    uiLayer->setCameraMask((int)(CameraFlag::USER1), true); // Gán node này vào camera UI
+    
+
+    // Tạo backgrond in game
+    auto backgroundingame = UIManager::createBGInGame();
+    this->addChild(backgroundingame, -100);
+    // Tạo camera cho BG
+    auto bgCamera = Camera::createOrthographic(640, 360, 1, 1000); // Tạo 1 camera trực giao
+    bgCamera->setCameraFlag(CameraFlag::USER2); // Gán cờ riêng cho camera này tách UI ra khỏi camera mặc định của game
+    bgCamera->setDepth(-2); // Thêm độ sâu để sắp xếp thứ tự hiển thị những đối tượng của camera này, default = 0
+    this->addChild(bgCamera);
+    bgCamera->setPosition3D(this->getDefaultCamera()->getPosition3D()); // Đặt vị trí cameraUI mới
+    backgroundingame->setCameraMask((int)(CameraFlag::USER2), true);
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
     scheduleUpdate();
@@ -130,6 +152,13 @@ void Level_1_Scene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::E
     {
         // AXLOGD("onTouchesEnded detected, X:{}  Y:{}", t->getLocation().x, t->getLocation().y);
     }
+}
+
+void Level_1_Scene::gameOver()
+{
+    auto gameOverScene = utils::createInstance<GameOverScene>();
+    gameOverScene->setBackgroundScreenshot(SpriteManager::getInstance().getScreenshot(this));
+    _director->replaceScene(gameOverScene);
 }
 
 void Level_1_Scene::update(float delta)

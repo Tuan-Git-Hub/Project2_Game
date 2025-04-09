@@ -1,6 +1,7 @@
 #include "OptionsBoard.h"
 #include "SpriteManager.h"
 #include "MainMenuBoard.h"
+#include "DataSettingMusic.h"
 #include "ui/UISlider.h"
 #define USE_AUDIO_ENGINE 1
 #if USE_AUDIO_ENGINE
@@ -33,11 +34,19 @@ bool OptionsBoard::init()
     this->addChild(optionsboard);
 
     // Tạo các nút bật tắt
-    musicONOFF = SpriteManager::getInstance().createSprite("buttonOn");
+    isMuteMusic = DataSettingMusic::getInstance().isMuteMusic();
+    if (isMuteMusic)
+        musicONOFF = SpriteManager::getInstance().createSprite("buttonOff");
+    else
+        musicONOFF = SpriteManager::getInstance().createSprite("buttonOn");
     auto button_toggleMusic = MenuItemSprite::create(musicONOFF, musicONOFF, AX_CALLBACK_0(OptionsBoard::toggleMusic, this));
     button_toggleMusic->setScale(0.9f);
 
-    sfxONOFF = SpriteManager::getInstance().createSprite("buttonOn");
+    isMuteSFX = DataSettingMusic::getInstance().isMuteSFX();
+    if (isMuteSFX)
+        sfxONOFF = SpriteManager::getInstance().createSprite("buttonOff");
+    else
+        sfxONOFF = SpriteManager::getInstance().createSprite("buttonOn");
     auto button_toggleSFX = MenuItemSprite::create(sfxONOFF, sfxONOFF, AX_CALLBACK_0(OptionsBoard::toggleSFX, this));
     button_toggleSFX->setScale(0.9f);
 
@@ -53,14 +62,14 @@ bool OptionsBoard::init()
     buttons->setPosition(Vec2::ZERO);
     optionsboard->addChild(buttons);
 
-    // Tạo slider SpriteManager::getInstance().getTextureByName("loadBar")
+    // Tạo slider
     auto slider = ui::Slider::create();
     slider->loadBarTexture("res/Options/load_bar.png"); // thanh load
     slider->loadSlidBallTextures("res/Options/slide_ball.png"); // nút kéo
 
     slider->setScale(1.5f);
     slider->setPosition(Vec2(96, 28));
-    slider->setPercent(30);
+    slider->setPercent(DataSettingMusic::getInstance().getPercentVolume());
 
     // Xử lý sự kiện khi người chơi kéo slider
     slider->addEventListener([&](Object* sender, ui::Slider::EventType type) 
@@ -71,6 +80,7 @@ bool OptionsBoard::init()
             float v = s->getPercent() / 100.0f;  // Chuyển giá trị 0-100 thành 0.0-1.0
             //AudioEngine::setVolume(name, v);  // Đặt âm lượng (name là ID, tên đặt âm thanh)
             AXLOG("music percent: %d", s->getPercent());
+            DataSettingMusic::getInstance().setPercentVolume(s->getPercent());
         }
     });
     optionsboard->addChild(slider);
@@ -81,6 +91,7 @@ bool OptionsBoard::init()
 void OptionsBoard::toggleMusic()
 {
     isMuteMusic = !isMuteMusic;
+    DataSettingMusic::getInstance().toggleMusic();
     if(isMuteMusic)
     {
         AXLOG("Music Off");
@@ -98,6 +109,7 @@ void OptionsBoard::toggleMusic()
 void OptionsBoard::toggleSFX()
 {
     isMuteSFX = !isMuteSFX;
+    DataSettingMusic::getInstance().toggleSFX();
     if(isMuteSFX)
     {
         AXLOG("SFX Off");

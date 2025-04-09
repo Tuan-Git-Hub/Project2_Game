@@ -17,6 +17,10 @@ BackgroundMainMenu* BackgroundMainMenu::createBg()
 
 bool BackgroundMainMenu::init()
 {
+    if (!Node::init()) 
+    {
+        return false;
+    }
     bg1 = SpriteManager::getInstance().createSprite("backgroundMainMenu");
     bg2 = SpriteManager::getInstance().createSprite("backgroundMainMenu");
     bg3 = SpriteManager::getInstance().createSprite("frog_backgroundMainMenu");

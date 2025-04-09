@@ -3,16 +3,23 @@
 
 using namespace ax;
 
-MobileButtons* MobileButtons::createMobileButtons()
+MobileButtons* MobileButtons::instance = nullptr;
+
+MobileButtons* MobileButtons::getInstance()
 {
-    MobileButtons* ret = new MobileButtons();
-    if (ret && ret->init()) 
+    if (!instance)
     {
-        ret->autorelease(); // quản lý bộ nhớ tự động, giúp không cần delete thủ công của axmol
-        return ret;
+        instance = new MobileButtons();
+        if (instance && instance->init())
+        {
+            instance->retain(); // giữ lại giúp không tự bị xóa khi hết scene
+            return instance;
+        }
+        delete instance;
+        instance = nullptr;
+        return nullptr;
     }
-    delete ret;
-    return nullptr;
+    return instance;
 }
 
 bool MobileButtons::init()
@@ -42,8 +49,8 @@ bool MobileButtons::init()
 
     // Tạo EventListenerTouchOneByOne cho nút di chuyển sang trái
     auto leftMoveListener = EventListenerTouchOneByOne::create();
-    leftMoveListener ->setSwallowTouches(true);
-    leftMoveListener ->onTouchBegan = [this, leftMoveButton](Touch* touch, Event* event){
+    leftMoveListener->setSwallowTouches(true);
+    leftMoveListener->onTouchBegan = [this, leftMoveButton](Touch* touch, Event* event){
         if (leftMoveButton->getBoundingBox().containsPoint(touch->getLocation()))
         {
             if (leftMove)
@@ -129,11 +136,6 @@ bool MobileButtons::init()
     return true;
 }
 
-std::function<void()> MobileButtons::leftMove;
-std::function<void()> MobileButtons::rightMove;
-std::function<void()> MobileButtons::jumpMove;
-std::function<void()> MobileButtons::stopMove;
-
 void MobileButtons::update(float dt)
 {
     if (isHoldingMoveLeft)
@@ -143,5 +145,14 @@ void MobileButtons::update(float dt)
     else if (isHoldingMoveRight)
     {
         rightMove();
+    }
+}
+
+void MobileButtons::deleteInstance()
+{
+    if (instance)
+    {
+        instance->release();
+        instance = nullptr;
     }
 }

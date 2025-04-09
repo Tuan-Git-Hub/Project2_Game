@@ -9,43 +9,67 @@ Trap* TrapFactory::createTrap(TrapType _trapType, const std::string& spriteFile)
         case TrapType::Spike:
         {
             Spike* certainTrap = new Spike();
-            certainTrap->init(spriteFile);
-            return certainTrap;
+            if (certainTrap && certainTrap->init(spriteFile))
+            {
+                certainTrap->autorelease();
+                return certainTrap;
+            }
+            delete certainTrap;
             break;
         }
         case TrapType::Trampoline:
         {
             Trampoline* certainTrap = new Trampoline();
-            certainTrap->init(spriteFile);
-            return certainTrap;
+            if (certainTrap && certainTrap->init(spriteFile))
+            {
+                certainTrap->autorelease();
+                return certainTrap;
+            }
+            delete certainTrap;
             break;
         }
         case TrapType::Fire:
         {
             Fire* certainTrap = new Fire();
-            certainTrap->init(spriteFile);
-            return certainTrap;
+            if (certainTrap && certainTrap->init(spriteFile))
+            {
+                certainTrap->autorelease();
+                return certainTrap;
+            }
+            delete certainTrap;
             break;
         }
         case TrapType::Saw:
         {
             Saw* certainTrap = new Saw();
-            certainTrap->init(spriteFile);
-            return certainTrap;
+            if (certainTrap && certainTrap->init(spriteFile))
+            {
+                certainTrap->autorelease();
+                return certainTrap;
+            }
+            delete certainTrap;
             break;
         }
         case TrapType::Fan:
         {
             Fan* certainTrap = new Fan();
-            certainTrap->init(spriteFile);
-            return certainTrap;
+            if (certainTrap && certainTrap->init(spriteFile))
+            {
+                certainTrap->autorelease();
+                return certainTrap;
+            }
+            delete certainTrap;
             break;
         }
         case TrapType::RockHead:
         {
             RockHead* certainTrap = new RockHead();
-            certainTrap->init(spriteFile);
-            return certainTrap;
+            if (certainTrap && certainTrap->init(spriteFile))
+            {
+                certainTrap->autorelease();
+                return certainTrap;
+            }
+            delete certainTrap;
             break;
         }
         default:
@@ -61,8 +85,12 @@ Trap* TrapFactory::createTrap(TrapType _trapType, const std::string& spriteFile,
     if (_trapType == TrapType::SandMudIce)
     {
         SandMudIce* certainTrap = new SandMudIce(_smiType);
-        certainTrap->init(spriteFile);
-        return certainTrap;
+        if (certainTrap && certainTrap->init(spriteFile))
+        {
+            certainTrap->autorelease();
+            return certainTrap;
+        }
+        delete certainTrap;
     }
     else
     {

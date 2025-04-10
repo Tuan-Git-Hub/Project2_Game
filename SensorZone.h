@@ -17,6 +17,7 @@ protected:
 
 public:
     SensorZone();
+    virtual ~SensorZone();
     SensorZone(const ax::Size& size);
     
 

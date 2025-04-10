@@ -131,7 +131,7 @@ bool PhysicsScene::init()
         bodyLogo->setGravityEnable(true);
         bodyLogo->setCategoryBitmask(0x01);
         bodyLogo->setCollisionBitmask(0x02|0x03);
-        bodyLogo->setContactTestBitmask(0x02|0x03);
+        bodyLogo->setContactTestBitmask(0x02|0x03|0x04);
         sprite->setPhysicsBody(bodyLogo);
 
         // add the sprite as a child to this layer
@@ -188,10 +188,15 @@ bool PhysicsScene::init()
     this->addChild(sawTrap);
 
     // Fan Trap
-    fanTrap = dynamic_cast<Fan*>(TrapFactory::createTrap(TrapType::Fan, "Traps/Fan/Fan_Off.png"));
-    fanTrap->setPosition(Vec2(visibleSize.width * 2 / 3, visibleSize.height * 1 / 2));
-    fanTrap->activateTrap();
-    this->addChild(fanTrap);
+    fanTrap1 = dynamic_cast<Fan*>(TrapFactory::createTrap(TrapType::Fan, "Traps/Fan/Fan_Off.png"));
+    fanTrap1->setPosition(Vec2(visibleSize.width * 1 / 5, visibleSize.height / 8));
+    fanTrap1->activateTrap();
+    this->addChild(fanTrap1);
+
+    fanTrap2 = dynamic_cast<Fan*>(TrapFactory::createTrap(TrapType::Fan, "Traps/Fan/Fan_Off.png"));
+    fanTrap2->setPosition(Vec2(visibleSize.width * 1 / 5 - fanTrap2->getContentSize().width, visibleSize.height / 8));
+    fanTrap2->activateTrap();
+    this->addChild(fanTrap2);
 
     /*auto windZone = fanTrap->getWindZone();
     if (!windZone->getPhysicsBody()->isEnabled())

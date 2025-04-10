@@ -10,19 +10,24 @@ SensorZone::SensorZone()
     }
 }
 
+SensorZone::~SensorZone()
+{
+    AXLOG("Hủy SensorZone!");
+}
+
 SensorZone::SensorZone(const ax::Size& size)
 {
     this->setContentSize(size);
     sensorBody = ax::PhysicsBody::createBox(size, ax::PhysicsMaterial(0, 0, 0));
     sensorBody->setDynamic(false);
     sensorBody->setCategoryBitmask(0x04);           // Gán loại của vùng cảm biến
-    sensorBody->setContactTestBitmask(0xFFFFFFFF);  // Kiểm tra va chạm với tất cả
+    sensorBody->setContactTestBitmask(0x01);  // Kiểm tra va chạm với tất cả
     sensorBody->setCollisionBitmask(0x00);          // Không va chạm vật lý
 
     // Đặt sensorBody là vùng cảm biến
     sensorBody->setGravityEnable(false);
     sensorBody->setDynamic(false);
-    sensorBody->setTag(static_cast<int>(TrapType::GenericTrap));  // Đánh dấu bẫy tương ứng với vùng Sensor
+    this->setTag(static_cast<int>(TrapType::GenericTrap));  // Đánh dấu bẫy tương ứng với vùng Sensor
 
     this->setPhysicsBody(sensorBody);
 }

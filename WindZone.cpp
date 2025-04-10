@@ -1,6 +1,10 @@
 #include "WindZone.h"
 
 WindZone::WindZone() : SensorZone() {}
+WindZone::~WindZone()
+{
+    AXLOG("Hủy WindZone!");
+}
 WindZone::WindZone(const ax::Size& size)
 {
     this->setContentSize(size);
@@ -10,7 +14,7 @@ WindZone::WindZone(const ax::Size& size)
     sensorBody = ax::PhysicsBody::createBox(size, ax::PhysicsMaterial(0, 0, 0));
     sensorBody->setDynamic(false);
     sensorBody->setCategoryBitmask(0x04);           // Gán loại của vùng cảm biến
-    sensorBody->setContactTestBitmask(0xFFFFFFFF);  // Kiểm tra va chạm với người chơi
+    sensorBody->setContactTestBitmask(0x01);  // Kiểm tra va chạm với người chơi
     sensorBody->setCollisionBitmask(0x00);          // Không va chạm vật lý
 
     // Đặt sensorBody là vùng cảm biến
@@ -37,7 +41,7 @@ WindZone::WindZone(const ax::Size& size, ax::Vec2& _DeftForceVector)
     // Đặt sensorBody là vùng cảm biến
     sensorBody->setGravityEnable(false);
     sensorBody->setDynamic(false);
-    sensorBody->setTag(static_cast<int>(TrapType::WindZone));  // Đánh dấu bẫy tương ứng với vùng Sensor
+    this->setTag(static_cast<int>(TrapType::WindZone));  // Đánh dấu bẫy tương ứng với vùng Sensor
 
     this->setPhysicsBody(sensorBody);
 }
@@ -45,12 +49,15 @@ WindZone::WindZone(const ax::Size& size, ax::Vec2& _DeftForceVector)
 void WindZone::doAction()
 {
     AXLOG("Gây ảnh hưởng lên vật thể trong vùng ảnh hưởng!");
+
     for (auto* obj : objectsInZone)
     {
         if (obj)
         {
             auto objBody = obj->getPhysicsBody();
             objBody->applyForce(DeftForceVector);
+            AXLOG("Đẩy đối tượng!");
+
         }
         else
         {

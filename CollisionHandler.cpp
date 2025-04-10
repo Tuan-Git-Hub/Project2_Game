@@ -171,6 +171,7 @@ bool CollisionHandler::onContactPreSolve(ax::PhysicsContact& contact, ax::Physic
 
 bool CollisionHandler::onSensorContactBegin(ax::PhysicsContact& contact)
 {
+    // AXLOG("Test SensorZone collisionHandler - IN");
     auto shapeA = contact.getShapeA();
     auto shapeB = contact.getShapeB();
 
@@ -186,25 +187,39 @@ bool CollisionHandler::onSensorContactBegin(ax::PhysicsContact& contact)
         AXLOG("Vật ĐI VÀO TRONG SensorZone");
         sensorZoneNode = bodyA->getNode();
         otherNode      = bodyB->getNode();
+        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        AXLOG("sensorNodeZone: %p", sensorZoneNode);
+        AXLOG("otherNode: %p", otherNode);
     }
     else if (bodyB->getCategoryBitmask() == 0x04)
     {
         AXLOG("Vật ĐI VÀO TRONG SensorZone");
         sensorZoneNode = bodyB->getNode();
         otherNode      = bodyA->getNode();
+        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        AXLOG("sensorNodeZone: %p", sensorZoneNode);
+        AXLOG("otherNode: %p", otherNode);
     }
-   /* else if (bodyA->getCategoryBitmask() != 0x04 && bodyB->getCategoryBitmask() != 0x04)
+    /*else if (bodyA->getCategoryBitmask() != 0x04 && bodyB->getCategoryBitmask() != 0x04)
         return false;*/
 
+    //
     if (sensorZoneNode && otherNode)
     {
+        // AXLOG("%d", sensorZoneNode->getTag() == static_cast<int>(TrapType::WindZone));
         if (sensorZoneNode->getTag() == static_cast<int>(TrapType::WindZone))
         {
             AXLOG("Vật thể đi vào trong windZone");
             auto windZone = dynamic_cast<WindZone*>(sensorZoneNode);
-            if (windZone)
+            if (!windZone)
             {
+                AXLOG("❌ Không thể ép kiểu sensorZoneNode thành WindZone.");
+            }
+            else
+            {
+                AXLOG("✅ Đã ép kiểu thành công, gọi onEnter và doAction");
                 windZone->onEnter(otherNode);
+                windZone->doAction();
             }
         }
     }
@@ -216,6 +231,7 @@ bool CollisionHandler::onSensorContactBegin(ax::PhysicsContact& contact)
 
 bool CollisionHandler::onSensorContactSeparate(ax::PhysicsContact& contact)
 {
+    // AXLOG("Test SensorZone collisionHandler - OUT");
     auto shapeA = contact.getShapeA();
     auto shapeB = contact.getShapeB();
 
@@ -231,30 +247,42 @@ bool CollisionHandler::onSensorContactSeparate(ax::PhysicsContact& contact)
         AXLOG("Vật ĐI RA KHỎI SensorZone");
         sensorZoneNode = bodyA->getNode();
         otherNode      = bodyB->getNode();
+        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        AXLOG("sensorNodeZone: %p", sensorZoneNode);
+        AXLOG("otherNode: %p", otherNode);
     }
     else if (bodyB->getCategoryBitmask() == 0x04)
     {
         AXLOG("Vật ĐI RA KHỎI SensorZone");
         sensorZoneNode = bodyB->getNode();
         otherNode      = bodyA->getNode();
+        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        AXLOG("sensorNodeZone: %p", sensorZoneNode);
+        AXLOG("otherNode: %p", otherNode);
     }
     /*else if (bodyA->getCategoryBitmask() != 0x04 && bodyB->getCategoryBitmask() != 0x04)
         return false;*/
 
-    if (sensorZoneNode != nullptr && otherNode != nullptr)
+    if (sensorZoneNode && otherNode)
     {
+        //AXLOG("%d", sensorZoneNode->getTag() == static_cast<int>(TrapType::WindZone));
         if (sensorZoneNode->getTag() == static_cast<int>(TrapType::WindZone))
         {
-            AXLOG("Vật thể đi vào trong windZone");
+            AXLOG("Vật thể đi ra khỏi windZone");
             auto windZone = dynamic_cast<WindZone*>(sensorZoneNode);
-            if (windZone)
+            if (!windZone)
             {
+                AXLOG("❌ Không thể ép kiểu sensorZoneNode thành WindZone.");
+            }
+            else
+            {
+                AXLOG("✅ Đã ép kiểu thành công, gọi onExit và doAction");
                 windZone->onExit(otherNode);
             }
         }
     }
-    /*else
-        return false;*/
+    else
+        return false;
 
     return true;
 }

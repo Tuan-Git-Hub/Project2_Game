@@ -15,9 +15,11 @@ protected:
 
 public:
     WindZone();
+    virtual ~WindZone();
     WindZone(const ax::Size& size);
     WindZone(const ax::Size& size, ax::Vec2& deftForceVector);
     void doAction() override;
+
 };
 
 #endif

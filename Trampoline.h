@@ -9,7 +9,7 @@
 class Trampoline : public Trap
 {
 protected:
-    ax::Vec2 DefltApplyVelo = ax::Vec2(500, 0);  // Vector biến thiên vận tốc, mặc định hướng lên trên
+    ax::Vec2 DefltApplyVelo = ax::Vec2(0, 500);  // Vector biến thiên vận tốc, mặc định hướng lên trên
 public:
     Trampoline();
     ~Trampoline();

@@ -73,8 +73,8 @@ private:
     Trap* ice;
 
     Saw* sawTrap;
-    Fan* fanTrap;
-    // WindZone* windZone;
+    Fan* fanTrap1;
+    Fan* fanTrap2;
 
     RockHead* rockHead;
 };

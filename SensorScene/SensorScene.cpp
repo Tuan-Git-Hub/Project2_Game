@@ -166,7 +166,7 @@ bool SensorScene::init()
 }
 
 // 🌟 Danh sách các vật thể hiện đang ở trong Sensor
-std::unordered_set<ax::PhysicsBody*> objectsInSensor;
+std::unordered_set<ax::Node*> objectsInSensor;
 
 bool SensorScene::onContactBegin(PhysicsContact& contact)
 {
@@ -179,12 +179,14 @@ bool SensorScene::onContactBegin(PhysicsContact& contact)
     // Kiểm tra nếu một trong hai là Sensor
     if (bodyA->getCategoryBitmask() == 0x04)
     {
-        objectsInSensor.insert(bodyB);
+        AXLOG("before IN objectInSensor");
+        objectsInSensor.insert(bodyB->getNode());
         AXLOG("📢 Vật thể vào vùng Sensor!");
     }
     else if (bodyB->getCategoryBitmask() == 0x04)
     {
-        objectsInSensor.insert(bodyA);
+        AXLOG("before IN objectInSensor");
+        objectsInSensor.insert(bodyA->getNode());
         AXLOG("📢 Vật thể vào vùng Sensor!");
     }
 
@@ -202,12 +204,14 @@ bool SensorScene::onContactSeparate(PhysicsContact& contact)
     // Kiểm tra nếu một trong hai là Sensor
     if (bodyA->getCategoryBitmask() == 0x04)
     {
-        objectsInSensor.erase(bodyB);
+        AXLOG("before OUT objectInSensor");
+        objectsInSensor.erase(bodyB->getNode());
         AXLOG("🚪 Vật thể rời khỏi vùng Sensor!");
     }
     else if (bodyB->getCategoryBitmask() == 0x04)
     {
-        objectsInSensor.erase(bodyA);
+        AXLOG("before OUT objectInSensor");
+        objectsInSensor.erase(bodyA->getNode());
         AXLOG("🚪 Vật thể rời khỏi vùng Sensor!");
     }
 

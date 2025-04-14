@@ -2,6 +2,7 @@
 #include "SpriteManager.h"
 #include "MainMenuBoard.h"
 #include "Level_1_Scene.h"
+#include "TestTrapScene3.h"
 
 using namespace ax;
 
@@ -79,6 +80,8 @@ void LevelsBoard::selectLevel_2()
 void LevelsBoard::selectLevel_3()
 {
     AXLOG("Scene Level 3");
+    auto scene3 = utils::createInstance<TestTrapScene3>();
+    _director->replaceScene(scene3);
 }
 
 void LevelsBoard::onReturn()

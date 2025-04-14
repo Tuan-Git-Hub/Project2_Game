@@ -1,25 +1,20 @@
-#include <HeartLives.h>
-#include <SpriteManager.h>
+#include "HeartLives.h"
+#include "SpriteManager.h"
+#include "GameManager.h"
 
 using namespace ax;
 
-HeartLives* HeartLives::instance = nullptr;
-
-HeartLives* HeartLives::getInstance()
+HeartLives* HeartLives::createHeartLives()
 {
-    if (!instance)
+
+    HeartLives* ret = new HeartLives();
+    if (ret && ret->init())
     {
-        instance = new HeartLives();
-        if (instance && instance->init())
-        {
-            instance->retain(); // giữ lại giúp không tự bị xóa khi hết scene
-            return instance;
-        }
-        delete instance;
-        instance = nullptr;
-        return nullptr;
+        ret->autorelease(); // quản lý bộ nhớ tự động, giúp không cần delete thủ công của axmol
+        return ret;
     }
-    return instance;
+    delete ret;
+    return nullptr;
 }
 
 bool HeartLives::init()
@@ -29,11 +24,16 @@ bool HeartLives::init()
         return false;
     }
     // Tạo trái tim
-    int original_quantity = quantity;
+    auto original_quantity = GameManager::getInstance().getNumberOfHearts();
     for (int i = 0; i < original_quantity; i++)
     {
         addAHeart();
     }
+    quantity = original_quantity;
+
+    // Gán callback vẽ hay xóa từ game manager
+    GameManager::getInstance().drawAHeart = [this]() { this->addAHeart(); };
+    GameManager::getInstance().eraseAHeart = [this]() { this->deleteAHeart(); };
     return true;
 }
 
@@ -76,13 +76,4 @@ void HeartLives::deleteAHeart()
     this->removeChild(vt_hearts.back());
     vt_hearts.popBack();
     quantity--;
-}
-
-void HeartLives::deleteInstance()
-{
-    if (instance)
-    {
-        instance->release();
-        instance = nullptr;
-    }
 }

@@ -1,6 +1,8 @@
 #include "MainMenuScene.h"
 #include "Utilities.h"
 #include "UIManager.h"
+#include "GameObjectManager.h"
+#include "GameManager.h"
 
 
 using namespace ax;
@@ -22,30 +24,8 @@ bool MainMenuScene::init()
     auto safeArea    = _director->getSafeAreaRect();
     auto safeOrigin  = safeArea.origin;
 
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
-
-    // add a "close" icon to exit the progress. it's an autorelease object
-    // auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-    //                                        AX_CALLBACK_1(MainMenuScene::menuCloseCallback, this));
-
-    // if (closeItem == nullptr || closeItem->getContentSize().width <= 0 || closeItem->getContentSize().height <= 0)
-    // {
-    //     Utilities::problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-    // }
-    // else
-    // {
-    //     float x = safeOrigin.x + safeArea.size.width - closeItem->getContentSize().width / 2;
-    //     float y = safeOrigin.y + closeItem->getContentSize().height / 2;
-    //     closeItem->setPosition(Vec2(x, y));
-    // }
-
-    // // create menu, it's an autorelease object
-    // auto menu = Menu::create(closeItem, NULL);
-    // menu->setPosition(Vec2::ZERO);
-    // this->addChild(menu, 1);
-
+    // Tạo hoặc reset game manager để tạo logic game
+    GameManager::getInstance().resetGameManager();
     // Some templates (uncomment what you  need)
     _touchListener                 = EventListenerTouchAllAtOnce::create();
     _touchListener->onTouchesBegan = AX_CALLBACK_2(MainMenuScene::onTouchesBegan, this);
@@ -55,13 +35,12 @@ bool MainMenuScene::init()
     /////////////////////////////
     // Load texture và sprite frame 1 lượt
     UIManager::loadTextures_SpriteFrames();
+    GameObjectManager::loadTextures_SpriteFrames();
     // Hình background cho main menu scene
-    AXLOG("background");
     auto background = UIManager::createBg();
     this->addChild(background);
 
     // Bảng menu
-    AXLOG("menuBoard");
     auto menuBoard = UIManager::createMainMenu();
     this->addChild(menuBoard, 1);
 

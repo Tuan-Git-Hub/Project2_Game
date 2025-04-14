@@ -17,13 +17,13 @@ class Player : public ax::Sprite
     };
 
     private:
-        const char* fileImage_idle_player = "res/Player/Ninja Frog/Idle/Player_1_Idle.plist";
-        const char* fileImage_run_player = "res/Player/Ninja Frog/Run/Player_1_Run.plist";
-        const char* fileImage_jump_player = "res/Player/Ninja Frog/Player_1_Jump.png";
-        const char* fileImage_fall_player = "res/Player/Ninja Frog/Player_1_Fall.png";
-        const char* fileImage_doublejump_player = "res/Player/Ninja Frog/DoubleJump/Player_1_DoubleJump.plist";
-        const char* fileImage_walljump_player = "res/Player/Ninja Frog/WallJump/Player_1_WallJump.plist";
-        const char* fileImage_hit_player = "res/Player/Ninja Frog/Hit/Player_1_Hit.plist";
+        // const char* fileImage_idle_player = "res/Player/Ninja Frog/Idle/Player_1_Idle.plist";
+        // const char* fileImage_run_player = "res/Player/Ninja Frog/Run/Player_1_Run.plist";
+        // const char* fileImage_jump_player = "res/Player/Ninja Frog/Player_1_Jump.png";
+        // const char* fileImage_fall_player = "res/Player/Ninja Frog/Player_1_Fall.png";
+        // const char* fileImage_doublejump_player = "res/Player/Ninja Frog/DoubleJump/Player_1_DoubleJump.plist";
+        // const char* fileImage_walljump_player = "res/Player/Ninja Frog/WallJump/Player_1_WallJump.plist";
+        // const char* fileImage_hit_player = "res/Player/Ninja Frog/Hit/Player_1_Hit.plist";
 
         PlayerState _currentState;
         ax::Action* _idleAction;
@@ -33,6 +33,7 @@ class Player : public ax::Sprite
         ax::Action* _doublejumpAction;
         ax::Action* _walljumpAction;
         ax::Action* _hitAction;
+        ax::PhysicsBody* _psbodyPlayer;
 
         int _hp = 3;
         ax::Vec2 _position = {100, 100}; // Vị trí ban đầu
@@ -42,8 +43,9 @@ class Player : public ax::Sprite
 
         bool isOnGround = true;
         bool hasDoubleJump = true;
-        bool isOnLeftWall = false;
-        bool isOnRightWall = false;
+        bool isTouchLeftWall = false;
+        bool isTouchRightWall = false;
+        int _touchpoint = 0; // Số điểm va chạm
     public:
 
         static Player *create();
@@ -58,6 +60,7 @@ class Player : public ax::Sprite
         void moveLeft();
         void moveRight();
         void jump();
+        void jump_while_on_wall();
         void fall();
         void double_jump();
         void wall_jump_Left();
@@ -68,10 +71,10 @@ class Player : public ax::Sprite
         void onRightKeyPressed();
         void onJumpKeyPressed();
         void onKeyReleased();
-        bool onContactBegin(ax::PhysicsContact& contact);
+        void handleBeginCollisionWith(ax::Node* node, ax::PhysicsContact& contact);
+        void handleSeparateCollisionWith(ax::Node* node, ax::PhysicsContact& contact);
 
         int getHP_Player() { return _hp; };
-        void add_A_HP();
         void delete_A_HP();
 
 };

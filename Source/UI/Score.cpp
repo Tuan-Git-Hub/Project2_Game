@@ -1,25 +1,20 @@
-#include <Score.h>
-#include <SpriteManager.h>
+#include "Score.h"
+#include "SpriteManager.h"
+#include "GameManager.h"
 
 using namespace ax;
 
-Score* Score::instance = nullptr;
-
-Score* Score::getInstance()
+Score* Score::createScoreLabel()
 {
-    if (!instance)
+
+    Score* ret = new Score();
+    if (ret && ret->init())
     {
-        instance = new Score();
-        if (instance && instance->init())
-        {
-            instance->retain(); // giữ lại giúp không tự bị xóa khi hết scene
-            return instance;
-        }
-        delete instance;
-        instance = nullptr;
-        return nullptr;
+        ret->autorelease(); // quản lý bộ nhớ tự động, giúp không cần delete thủ công của axmol
+        return ret;
     }
-    return instance;
+    delete ret;
+    return nullptr;
 }
 
 bool Score::init()
@@ -28,13 +23,16 @@ bool Score::init()
     {
         return false;
     }
-
+    // Lấy thông tin điểm số
+    this->score_player = GameManager::getInstance().getPlayerScore();
     // Tạo điểm số
     scoreLabel = Label::createWithTTF("SCORE:" + std::to_string(score_player), "fonts/Matrix_Mono.ttf", 12);
     scoreLabel->setAnchorPoint(Vec2(0, 1)); // để neo ở top left
     scoreLabel->setPosition(Vec2(20, 310));
     this->addChild(scoreLabel);
 
+    // Gán callback vẽ từ game manager
+    GameManager::getInstance().drawScore = [this]() { this->addPoints(); };
     return true;
 }
 
@@ -42,13 +40,4 @@ void Score::addPoints()
 {
     score_player++;
     scoreLabel->setString("SCORE:" + std::to_string(score_player));
-}
-
-void Score::deleteInstance()
-{
-    if (instance)
-    {
-        instance->release();
-        instance = nullptr;
-    }
 }

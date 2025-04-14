@@ -2,10 +2,10 @@
 #include "Utilities.h"
 #include "UIManager.h"
 #include "LevelManager.h"
+#include "GameManager.h"
 #include "Player.h"
 #include "CollisionManager.h"
 #include "CameraController.h"
-#include "GameOverScene.h"
 
 using namespace ax;
 
@@ -26,29 +26,11 @@ bool Level_1_Scene::init()
     auto safeOrigin  = safeArea.origin;
 
     //Tạo trọng lực
-    getPhysicsWorld()->setGravity(Vec2(0, -900));
-    //Bật hiển thị thông tin debug để kiểm tra va chạm
-    //getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-
-    // add a "close" icon to exit the progress. it's an autorelease object
-    // auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-    //                                        AX_CALLBACK_1(Level_1_Scene::menuCloseCallback, this));
-
-    // if (closeItem == nullptr || closeItem->getContentSize().width <= 0 || closeItem->getContentSize().height <= 0)
-    // {
-    //     Utilities::problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-    // }
-    // else
-    // {
-    //     float x = safeOrigin.x + safeArea.size.width - closeItem->getContentSize().width / 2;
-    //     float y = safeOrigin.y + closeItem->getContentSize().height / 2;
-    //     closeItem->setPosition(Vec2(x, y));
-    // }
-
-    // create menu, it's an autorelease object
-    // auto menu = Menu::create(closeItem, NULL);
-    // menu->setPosition(Vec2::ZERO);
-    // this->addChild(menu, 1);
+    getPhysicsWorld()->setGravity(Vec2(0, -980));
+    
+    this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    // Chọn level để game manager tạo logic game
+    GameManager::getInstance().selectLevel(GameManager::Level::LEVEL_1);
 
     // Some templates (uncomment what you  need)
     _touchListener                 = EventListenerTouchAllAtOnce::create();
@@ -83,21 +65,19 @@ bool Level_1_Scene::init()
 
     // Tạo UI
     auto uiLayer = Node::create(); // Tạo 1 node chứa UI
-    this->addChild(uiLayer, 100); // Thêm uiLayer vào scene với z-index = 100 để đảm bảo luôn ở trên các đối tượng khác
-    //uiLayer->setLocalZOrder(100);
-    
+    this->addChild(uiLayer, 100); // Thêm uiLayer vào scene với z-index = 100 để đảm bảo luôn ở trên các đối tượng khác   
     // Tạo nút bấm
-    auto buttons = UIManager::getInstanceMobileButtons();
+    auto buttons = UIManager::createMobileButtons();
+    buttons->setName("Mobile_Buttons");
     uiLayer->addChild(buttons); // Thêm vào node các UI cần
     // Tạo máu nhân vật
-    auto heartLives = UIManager::getInstanceHeartLives();
+    auto heartLives = UIManager::createHeartLives();
     uiLayer->addChild(heartLives);
     // Tạo điểm số
-    auto scorePlayer = UIManager::getInstanceScore();
+    auto scorePlayer = UIManager::createScoreLabel();
     uiLayer->addChild(scorePlayer);
     // Tạo bộ đếm thời gian
-    auto timer = UIManager::createGameTimer(GameTimer::Level::LEVEL_1);
-    timer->timeOut = [this]() { this->gameOver(); }; // gán call back
+    auto timer = UIManager::createGameTimer();
     uiLayer->addChild(timer);
     // Tạo setting in game
     auto settingINGame = UIManager::createSettingBoardInGame();
@@ -154,12 +134,12 @@ void Level_1_Scene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::E
     }
 }
 
-void Level_1_Scene::gameOver()
-{
-    auto gameOverScene = utils::createInstance<GameOverScene>();
-    gameOverScene->setBackgroundScreenshot(SpriteManager::getInstance().getScreenshot(this));
-    _director->replaceScene(gameOverScene);
-}
+// void Level_1_Scene::gameOver()
+// {
+//     auto gameOverScene = utils::createInstance<GameOverScene>();
+//     gameOverScene->setBackgroundScreenshot(SpriteManager::getInstance().getScreenshot(this));
+//     _director->replaceScene(gameOverScene);
+// }
 
 void Level_1_Scene::update(float delta)
 {
@@ -173,6 +153,8 @@ void Level_1_Scene::update(float delta)
 
     case GameState::update:
     {
+        // Gọi GameManager ở update để chạy update của game manager
+        GameManager::getInstance().update(delta);
         /////////////////////////////
         // Add your codes below...like....
         //

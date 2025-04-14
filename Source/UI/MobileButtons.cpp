@@ -3,23 +3,22 @@
 
 using namespace ax;
 
-MobileButtons* MobileButtons::instance = nullptr;
+std::function<void()> MobileButtons::leftMove;
+std::function<void()> MobileButtons::rightMove;
+std::function<void()> MobileButtons::jumpMove;
+std::function<void()> MobileButtons::stopMove;
 
-MobileButtons* MobileButtons::getInstance()
+MobileButtons* MobileButtons::createMobileButtons()
 {
-    if (!instance)
+
+    MobileButtons* ret = new MobileButtons();
+    if (ret && ret->init())
     {
-        instance = new MobileButtons();
-        if (instance && instance->init())
-        {
-            instance->retain(); // giữ lại giúp không tự bị xóa khi hết scene
-            return instance;
-        }
-        delete instance;
-        instance = nullptr;
-        return nullptr;
+        ret->autorelease(); // quản lý bộ nhớ tự động, giúp không cần delete thủ công của axmol
+        return ret;
     }
-    return instance;
+    delete ret;
+    return nullptr;
 }
 
 bool MobileButtons::init()
@@ -131,6 +130,29 @@ bool MobileButtons::init()
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(jumpMoveListener ,jumpMoveButton);
 
+    // Tạo sự kiện nhấn nút ( sau xóa bỏ )
+    auto keyboardListener = EventListenerKeyboard::create();
+    keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode code, Event* event) {
+        if (code == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
+        {
+            rightMove();
+        }
+        else if (code == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
+        {
+            leftMove();
+        }
+        else if (code == EventKeyboard::KeyCode::KEY_UP_ARROW)
+        {
+            jumpMove();
+        }
+    };
+    keyboardListener->onKeyReleased = [this](EventKeyboard::KeyCode code, Event* event) {
+        if (code == EventKeyboard::KeyCode::KEY_RIGHT_ARROW || code == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
+        {
+            stopMove();
+        }
+    };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
     scheduleUpdate(); // Cập nhật mỗi frame
 
     return true;
@@ -145,14 +167,5 @@ void MobileButtons::update(float dt)
     else if (isHoldingMoveRight)
     {
         rightMove();
-    }
-}
-
-void MobileButtons::deleteInstance()
-{
-    if (instance)
-    {
-        instance->release();
-        instance = nullptr;
     }
 }

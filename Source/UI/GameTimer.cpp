@@ -1,14 +1,15 @@
 #include "GameTimer.h"
 #include "SpriteManager.h"
+#include "GameManager.h"
 #include "fmt/core.h"
 
 using namespace ax;
 
-GameTimer* GameTimer::createGameTimer(Level level)
+GameTimer* GameTimer::createGameTimer()
 {
 
     GameTimer* ret = new GameTimer();
-    if (ret && ret->init(level))
+    if (ret && ret->init())
     {
         ret->autorelease(); // quản lý bộ nhớ tự động, giúp không cần delete thủ công của axmol
         return ret;
@@ -17,7 +18,7 @@ GameTimer* GameTimer::createGameTimer(Level level)
     return nullptr;
 }
 
-bool GameTimer::init(Level level)
+bool GameTimer::init()
 {
     if (!Node::init()) 
     {
@@ -35,13 +36,8 @@ bool GameTimer::init(Level level)
     hourglass->setColor(Color3B(200, 200, 200));
     this->addChild(hourglass);
 
-    // Tạo bộ đếm thời gian
-    if (level == Level::LEVEL_1)
-        timeLeft = time_level_1;
-    else if (level == Level::LEVEL_2)
-        timeLeft = time_level_2;
-    else if (level == Level::LEVEL_3)
-        timeLeft = time_level_3;
+    // Lấy dữ liệu từ game manager
+    timeLeft = GameManager::getInstance().getTimeLeft();
 
     // Tạo bộ đếm
     auto str = fmt::format("{:.0f}", timeLeft); // 1 kiểu chuyển đổi từ float về string
@@ -50,21 +46,14 @@ bool GameTimer::init(Level level)
     timeLabel->setPosition(hourglass->getPosition() + Vec2(12, 0));
     this->addChild(timeLabel);
 
-    scheduleUpdate();
+    // Gán call back từ game manager
+    GameManager::getInstance().drawTime = [this](float t) { this->drawTimeLeft(t); };
 
     return true;
 }
 
-void GameTimer::update(float dt)
+void GameTimer::drawTimeLeft(float t)
 {
-    timeLeft -= dt;
-    if (timeLeft <= 0.0f)
-    {
-        AXLOG("time out");
-        this->unscheduleUpdate();
-        if (timeOut)
-            timeOut();
-        return;
-    }
+    timeLeft = t;
     timeLabel->setString(fmt::format("{:.0f}", timeLeft));
 }

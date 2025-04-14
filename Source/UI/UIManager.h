@@ -82,24 +82,24 @@ public:
         return MainMenuBoard::createMainMenu();
     }
 
-    static MobileButtons* getInstanceMobileButtons()
+    static MobileButtons* createMobileButtons()
     {
-        return MobileButtons::getInstance();
+        return MobileButtons::createMobileButtons();
     }
 
-    static HeartLives* getInstanceHeartLives()
+    static HeartLives* createHeartLives()
     {
-        return HeartLives::getInstance();
+        return HeartLives::createHeartLives();
     }
 
-    static Score* getInstanceScore()
+    static Score* createScoreLabel()
     {
-        return Score::getInstance();
+        return Score::createScoreLabel();
     }
 
-    static GameTimer* createGameTimer(GameTimer::Level level)
+    static GameTimer* createGameTimer()
     {
-        return GameTimer::createGameTimer(level);
+        return GameTimer::createGameTimer();
     }
 
     static SettingBoard* createSettingBoardInGame()

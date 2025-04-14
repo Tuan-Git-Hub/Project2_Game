@@ -27,9 +27,6 @@ public:
     // a selector callback
     void menuCloseCallback(ax::Object* sender);
 
-    // gameover
-    void gameOver();
-
     Level_1_Scene();
     ~Level_1_Scene();
 

@@ -157,7 +157,8 @@ void SettingBoard::onSetting()
 {
     AXLOG("Pause Game");
     _director->pause();
-    MobileButtons::getInstance()->setPosition(MobileButtons::getInstance()->getPosition() + Vec2(0, -1000));
+    auto mobileButtons = this->getParent()->getChildByName("Mobile_Buttons");
+    mobileButtons->setPosition(mobileButtons->getPosition() + Vec2(0, -1000));
     settingBoard->setVisible(true);
     buttonSettingInGame->setVisible(false);
 }
@@ -167,7 +168,8 @@ void SettingBoard::onReturnScene()
 {
     AXLOG("Resume Game");
     _director->resume();
-    MobileButtons::getInstance()->setPosition(MobileButtons::getInstance()->getPosition() + Vec2(0, 1000));
+    auto mobileButtons = this->getParent()->getChildByName("Mobile_Buttons");
+    mobileButtons->setPosition(mobileButtons->getPosition() + Vec2(0, 1000));
     settingBoard->setVisible(false);
     buttonSettingInGame->setVisible(true);
 

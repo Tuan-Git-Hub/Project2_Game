@@ -1,6 +1,6 @@
 #include "GameOverBoard.h"
 #include "SpriteManager.h"
-#include "Score.h"
+#include "GameManager.h"
 #include "MainMenuScene.h"
 
 using namespace ax;
@@ -29,7 +29,7 @@ bool GameOverBoard::init()
     this->addChild(gameOverBoard);
 
     // Tạo điểm số
-    auto score = Score::getInstance()->getScorePlayer();
+    auto score = GameManager::getInstance().getPlayerScore();
     auto scoreLabel_1 = Label::createWithTTF("SCORE", "fonts/Born2bSportyFS.otf", 40);
     scoreLabel_1->setAnchorPoint(Vec2(0.5, 0.5)); // để neo ở giữa
     scoreLabel_1->setPosition(Vec2(98, 62));

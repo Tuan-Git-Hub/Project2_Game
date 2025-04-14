@@ -46,6 +46,7 @@ class Player : public ax::Sprite
         bool isTouchLeftWall = false;
         bool isTouchRightWall = false;
         int _touchpoint = 0; // Số điểm va chạm
+        std::pair<ax::Vec2, ax::Vec2> _contactDataPoint = {ax::Vec2::ZERO, ax::Vec2::ZERO};
     public:
 
         static Player *create();

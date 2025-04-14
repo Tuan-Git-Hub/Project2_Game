@@ -62,14 +62,23 @@ void GameManager::createSceneGameOver()
 
 void GameManager::update(float dt)
 {
-    if (_timeLeft > 0.0f)
-    {
-        _timeLeft -= dt;
-        drawTime(_timeLeft);
+    if (_numberOfHearts > 0)
+    {    
+        if (_timeLeft > 0.0f)
+        {
+            _timeLeft -= dt;
+            drawTime(_timeLeft);
+        }
+        else if (_timeLeft <= 0.0f)
+        {
+            AXLOG("time out");
+            this->createSceneGameOver();
+            return;
+        }
     }
-    else if (_timeLeft <= 0.0f)
+    else
     {
-        AXLOG("time out");
+        AXLOG("Player die");
         this->createSceneGameOver();
         return;
     }

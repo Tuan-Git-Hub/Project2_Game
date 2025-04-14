@@ -244,8 +244,8 @@ void Player::wall_jump_Right()
 
 void Player::hit()
 {
-    _velocity.x = (this->getScaleX()) * 50.0f;
-    _velocity.y = 50.0f;
+    _velocity.x = (this->getScaleX()) * -150.0f;
+    _velocity.y = 200.0f;
     setState(PlayerState::Hit);
     _psbodyPlayer->setVelocity(_velocity);
 }
@@ -304,14 +304,26 @@ void Player::handleBeginCollisionWith(Node* node, PhysicsContact& contact)
 {
     auto contactData = contact.getContactData(); // Lấy dữ liệu
     _touchpoint += contactData->count; // cộng số điểm tiếp xúc
+    auto norVector = contactData->normal; // Lấy vector pháp tuyến của va chạm
+    auto pointContact = contactData->points[0]; // Lấy điểm va chạm
     AXLOG("contact count: %d", _touchpoint);
-
+    AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+    AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
+    
+    //Lưu thông tin va chạm nếu trùng sẽ bỏ qua
+    if (_contactDataPoint.first.isZero() && _contactDataPoint.second.isZero())
+    {
+        _contactDataPoint.first = norVector;
+        _contactDataPoint.second = pointContact;
+    }
+    else
+    {
+        if (_contactDataPoint.first == norVector && _contactDataPoint.second == pointContact)
+            return;
+    }
     if (node->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::Ground)
     {
-        auto norVector = contactData->normal; // Lấy vector pháp tuyến của va chạm
-        auto pointContact = contactData->points[0]; // Lấy điểm va chạm
         _position = this->getPosition();
-        AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
         if (node->getName() == "WallTest") // Dùng cho bản test scene 3
             norVector *= -1.0f;
 
@@ -322,21 +334,33 @@ void Player::handleBeginCollisionWith(Node* node, PhysicsContact& contact)
             if (std::abs(norVector.dot(Vec2(0, -1))) > 0.7f && _position.y - pointContact.y > 0) // Xem Lực hướng xuống hoặc lên với điểm va chạm để biết trạng thái player
             {
                 AXLOG("Player is on ground");
+                AXLOG("contact count: %d", _touchpoint);
+                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 this->idle();
             }
             else if (std::abs(norVector.dot(Vec2(0, 1))) > 0.7f && _position.y - pointContact.y < 0)
             {
                 AXLOG("Player is hit head");
+                AXLOG("contact count: %d", _touchpoint);
+                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 this->fall();
             }
             else if (std::abs(norVector.dot(Vec2(1, 0))) > 0.7f && _position.x - pointContact.x < 0)
             {
                 AXLOG("Player is on left wall");
+                AXLOG("contact count: %d", _touchpoint);
+                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 this->wall_jump_Left();
             }
             else if (std::abs(norVector.dot(Vec2(-1, 0))) > 0.7f && _position.x - pointContact.x > 0)
             {
                 AXLOG("Player is on right wall");
+                AXLOG("contact count: %d", _touchpoint);
+                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 this->wall_jump_Right();
             }
         }
@@ -345,16 +369,32 @@ void Player::handleBeginCollisionWith(Node* node, PhysicsContact& contact)
             if (std::abs(norVector.dot(Vec2(1, 0))) > 0.7f && _position.x - pointContact.x < 0)
             {
                 AXLOG("Player touch the left wall");
+                AXLOG("contact count: %d", _touchpoint);
+                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 isTouchLeftWall = true;
                 this->idle();
             }
             else if (std::abs(norVector.dot(Vec2(-1, 0))) > 0.7f && _position.x - pointContact.x > 0)
             {
                 AXLOG("Player touch the right wall");
+                AXLOG("contact count: %d", _touchpoint);
+                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 isTouchRightWall = true;
                 this->idle();
             }
         }
+    }
+    if (node->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::SpikeTrap)
+    {
+        AXLOG("Player touch the spike trap");
+        AXLOG("contact count: %d", _touchpoint);
+        AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+        AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
+        
+        this->hit();
+        this->delete_A_HP();
     }
 }
 
@@ -362,13 +402,22 @@ void Player::handleSeparateCollisionWith(Node* node, PhysicsContact& contact)
 {
     auto contactData = contact.getContactData(); // Lấy dữ liệu
     _touchpoint -= contactData->count; // trừ đi số điểm đã tiếp xúc
-    AXLOG("contact count: %d", _touchpoint);
+    auto norVector = contactData->normal; // Lấy vector pháp tuyến của va chạm
+    auto pointContact = contactData->points[0]; // Lấy điểm va chạm
+
+    AXLOG("contact count: %d", _touchpoint);   
+    AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+    AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
+
     if (_touchpoint == 0)
     {
         isOnGround = false;
         isTouchLeftWall = false;
         isTouchRightWall = false;
     }
+    // Xóa đi thông tin va chạm vì đã tách ra
+    _contactDataPoint.first.setZero();
+    _contactDataPoint.second.setZero();
 }
 
 void Player::delete_A_HP()

@@ -37,8 +37,7 @@ void SensorZone::onEnter(ax::Node* obj)
     if (objectsInZone.find(obj) == objectsInZone.end())
     {
         objectsInZone.insert(obj);
-        AXLOG("ĐÃ VÀO vùng sensor");
-        std::cout << "🔵 " << obj->getName() << " ĐÃ VÀO vùng sensor!\n";
+        AXLOG("ĐÃ VÀO vùng sensor, ĐƯA đối tượng vào objectsInZone");
     }
 }
 
@@ -46,8 +45,7 @@ void SensorZone::onExit(ax:: Node* obj)
 {
     if (objectsInZone.erase(obj))
     {
-        AXLOG("ĐÃ RỜI KHỎI vùng sensor");
-        std::cout << "🔴 " << obj->getName() << " ĐÃ RỜI KHỎI vùng sensor!\n";
+        AXLOG("ĐÃ RỜI KHỎI vùng sensor, XÓA đối tượng khỏi objectsInZone");
     }
 }
 
@@ -59,7 +57,12 @@ void SensorZone::checkObjectsInZone()
     }
 }
 
-void SensorZone::doAction()
+void SensorZone::doActionToAll()
 {
-    AXLOG("Gây ảnh hưởng!");
+    AXLOG("Gây ảnh hưởng đến MỌI đối tượng!");
+}
+
+void SensorZone::doActionToOne(ax::Node* obj)
+{
+    AXLOG("Gây ảnh hưởng đến MỘT đối tượng: %p", obj);
 }

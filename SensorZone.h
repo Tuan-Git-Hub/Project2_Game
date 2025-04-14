@@ -31,7 +31,8 @@ public:
     void checkObjectsInZone();
 
     // Tác động lên các vật thể trong vùng cảm biến:
-    virtual void doAction();
+    virtual void doActionToAll();
+    virtual void doActionToOne(ax::Node* obj);
     
 };
 

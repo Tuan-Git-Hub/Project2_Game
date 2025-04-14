@@ -46,22 +46,59 @@ WindZone::WindZone(const ax::Size& size, ax::Vec2& _DeftForceVector)
     this->setPhysicsBody(sensorBody);
 }
 
-void WindZone::doAction()
+void WindZone::doActionToAll()
 {
-    AXLOG("Gây ảnh hưởng lên vật thể trong vùng ảnh hưởng!");
+    AXLOG("Gây ảnh hưởng lên %zu vật thể trong vùng WindZone", objectsInZone.size());
+    AXLOG("Đẩy MỌI vật thể trong vùng WindZone");
 
     for (auto* obj : objectsInZone)
     {
-        if (obj)
+        if (!obj)
         {
-            auto objBody = obj->getPhysicsBody();
-            objBody->applyForce(DeftForceVector);
-            AXLOG("Đẩy đối tượng!");
+            AXLOG("⚠️ Cảnh báo: obj là nullptr!");
+            continue;
+        }
 
+        auto objBody = obj->getPhysicsBody();
+        if (objBody)
+        {
+            AXLOG("Khỗi lượng của đối tượng:  %.3f", objBody->getMass());
+            objBody->applyForce(DeftForceVector);
+            AXLOG("✅ Đã đẩy đối tượng: %p", obj);
         }
         else
         {
-            AXLOG("Cảnh báo: Player không có PhysicsBody! Không thể tác động lực.");
+            AXLOG("⚠️ Cảnh báo: Đối tượng %p không có PhysicsBody!", obj);
         }
     }
+}
+
+void WindZone::doActionToOne(ax::Node* obj) {
+    AXLOG("Gây ảnh hưởng lên %zu vật thể trong vùng WindZone", objectsInZone.size());
+    AXLOG("Đẩy MỘT vật thể trong vùng WindZone: %p", obj);
+
+        if (!obj)
+        {
+            AXLOG("⚠️ Cảnh báo: obj là nullptr!");
+        }
+
+        if (objectsInZone.find(obj) == objectsInZone.end())
+        {
+            AXLOG("⚠️ Cảnh báo: obj không nằm trong objectsInZone!");
+        }
+
+        else
+        {
+            auto objBody = obj->getPhysicsBody();
+            if (objBody)
+            {
+                AXLOG("Khỗi lượng của đối tượng:  %.3f", objBody->getMass());
+                objBody->applyImpulse(DeftForceVector);
+                AXLOG("✅ Đã đẩy đối tượng: %p", obj);
+            }
+            else
+            {
+                AXLOG("⚠️ Cảnh báo: Đối tượng %p không có PhysicsBody!", obj);
+            }
+        }
 }

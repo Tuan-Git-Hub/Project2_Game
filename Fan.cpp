@@ -119,8 +119,6 @@ void Fan::activateTrap()
     // Chạy Animation
     this->runAction(RepeatForever::create(animate));
 
-    windZone->doAction();
-
 }
 
 void Fan::deactivateTrap()

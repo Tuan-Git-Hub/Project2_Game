@@ -187,18 +187,18 @@ bool CollisionHandler::onSensorContactBegin(ax::PhysicsContact& contact)
         AXLOG("Vật ĐI VÀO TRONG SensorZone");
         sensorZoneNode = bodyA->getNode();
         otherNode      = bodyB->getNode();
-        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        /*AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
         AXLOG("sensorNodeZone: %p", sensorZoneNode);
-        AXLOG("otherNode: %p", otherNode);
+        AXLOG("otherNode: %p", otherNode);*/
     }
     else if (bodyB->getCategoryBitmask() == 0x04)
     {
         AXLOG("Vật ĐI VÀO TRONG SensorZone");
         sensorZoneNode = bodyB->getNode();
         otherNode      = bodyA->getNode();
-        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        /*AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
         AXLOG("sensorNodeZone: %p", sensorZoneNode);
-        AXLOG("otherNode: %p", otherNode);
+        AXLOG("otherNode: %p", otherNode);*/
     }
     /*else if (bodyA->getCategoryBitmask() != 0x04 && bodyB->getCategoryBitmask() != 0x04)
         return false;*/
@@ -219,7 +219,7 @@ bool CollisionHandler::onSensorContactBegin(ax::PhysicsContact& contact)
             {
                 AXLOG("✅ Đã ép kiểu thành công, gọi onEnter và doAction");
                 windZone->onEnter(otherNode);
-                windZone->doAction();
+                windZone->doActionToOne(otherNode);
             }
         }
     }
@@ -247,18 +247,18 @@ bool CollisionHandler::onSensorContactSeparate(ax::PhysicsContact& contact)
         AXLOG("Vật ĐI RA KHỎI SensorZone");
         sensorZoneNode = bodyA->getNode();
         otherNode      = bodyB->getNode();
-        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        /*AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
         AXLOG("sensorNodeZone: %p", sensorZoneNode);
-        AXLOG("otherNode: %p", otherNode);
+        AXLOG("otherNode: %p", otherNode);*/
     }
     else if (bodyB->getCategoryBitmask() == 0x04)
     {
         AXLOG("Vật ĐI RA KHỎI SensorZone");
         sensorZoneNode = bodyB->getNode();
         otherNode      = bodyA->getNode();
-        AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
+        /*AXLOG("SensorZone's tag: %d", sensorZoneNode->getTag());
         AXLOG("sensorNodeZone: %p", sensorZoneNode);
-        AXLOG("otherNode: %p", otherNode);
+        AXLOG("otherNode: %p", otherNode);*/
     }
     /*else if (bodyA->getCategoryBitmask() != 0x04 && bodyB->getCategoryBitmask() != 0x04)
         return false;*/

@@ -126,7 +126,7 @@ bool PhysicsScene::init()
         sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 
         // create a physics body for the sprite
-        auto bodyLogo = PhysicsBody::createBox(sprite->getContentSize(), PhysicsMaterial(0.1f, 1.0f, 0.0f));
+        auto bodyLogo = PhysicsBody::createBox(sprite->getContentSize(), PhysicsMaterial(0.015f, 1.0f, 0.0f));
         bodyLogo->setDynamic(true);
         bodyLogo->setGravityEnable(true);
         bodyLogo->setCategoryBitmask(0x01);
@@ -151,7 +151,7 @@ bool PhysicsScene::init()
     // Trampoline Trap
     trampolineTrap = TrapFactory::createTrap(TrapType::Trampoline, "Traps/Trampoline/Trampoline_Idle.png");
     // Caution: AnchorPoint: (0.5, 0)
-    trampolineTrap->setPosition(Vec2(visibleSize.width, trampolineTrap->getContentSize().width/2 + 75));
+    trampolineTrap->setPosition(Vec2(visibleSize.width, trampolineTrap->getContentSize().width/2 + 30));
     // Thử quay 90 độ
     trampolineTrap->setRotation(-90.0f);
     this->addChild(trampolineTrap);

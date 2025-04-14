@@ -10,7 +10,7 @@
 class Fan : public Trap
 {
 protected:
-    ax::Vec2 DeftForceVector = ax::Vec2(0, 300.0f);
+    ax::Vec2 DeftForceVector = ax::Vec2(0, 3000.0f);
     WindZone* windZone;
 
 public:

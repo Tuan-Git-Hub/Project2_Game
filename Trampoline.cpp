@@ -52,7 +52,7 @@ void Trampoline::dealDamage(ax::Node* player)
     float veloRot = this->getRotation();
 
     // Thực hiện phép xoay Vector vận tốc tác động mặc định
-    Vec2 applyVelo = this->DefltApplyVelo.rotateByAngle(Vec2::ZERO, AX_DEGREES_TO_RADIANS(veloRot));
+    Vec2 applyVelo = this->DefltApplyVelo.rotateByAngle(Vec2::ZERO, AX_DEGREES_TO_RADIANS(-veloRot)); // Dấu trừ, vì ở đây quay theo quy tắc toán học, khác ->setRotation()
 
     // Hiển thị applyVelo
     AXLOG("applyVelo: (%.0f, %.0f)", applyVelo.x, applyVelo.y);

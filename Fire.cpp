@@ -46,6 +46,8 @@ void Fire::dealDamage(ax::Node* player)
         return;
 
     AXLOG("Bẫy (Fire) gây %d sát thương!", damage);
+    // Chèn âm thanh
+    int audio = AudioEngine::play2d("sound_game/mechanic/fire-cut.wav", false, 0.8f);
 
 }
 
@@ -86,14 +88,14 @@ void Fire::activateTrap()
     }
 
     // Tạo Animation
-    auto animation = Animation::createWithSpriteFrames(frames, 0.1f);
+    auto animation = Animation::createWithSpriteFrames(frames, 1.0f/3);
     auto animate   = Animate::create(animation);
 
     // Chạy Animation
     this->runAction(RepeatForever::create(animate));
 
-    // Hẹn thời gian để tắt bẫy sau 0.3 giây
-    this->scheduleOnce([this](float) { this->deactivateTrap(); }, 0.3f, "deactivate_trap");
+    // Hẹn thời gian để tắt bẫy sau 1.0 giây
+    this->scheduleOnce([this](float) { this->deactivateTrap(); }, 1.0f, "deactivate_trap");
 }
 
 void Fire::deactivateTrap()

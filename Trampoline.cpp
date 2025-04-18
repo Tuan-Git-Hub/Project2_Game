@@ -48,6 +48,9 @@ void Trampoline::dealDamage(ax::Node* player)
     AXLOG("Bẫy (Trampoline) gây %d sát thương!", damage);
     AXLOG("Đối tượng bị đẩy ngược lại");
 
+    // Chèn âm thanh
+    int audio = AudioEngine::play2d("sound_game/mechanic/hydraulic-cut.wav", false, 1.0f);
+
     // Lấy góc xoay hiện tại của Trampoline
     float veloRot = this->getRotation();
 
@@ -76,6 +79,7 @@ void Trampoline::activateTrap()
         return;
     isActive = true;
     AXLOG("Bãy (Trampoline) đã kích hoạt!");
+
     // Load sprite sheet
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Traps/Trampoline/Trampoline_Jump.plist");
 
@@ -106,14 +110,14 @@ void Trampoline::activateTrap()
     }
 
     // Tạo Animation
-    auto animation = Animation::createWithSpriteFrames(frames, 0.1f);
+    auto animation = Animation::createWithSpriteFrames(frames, 1.0f/8);
     auto animate   = Animate::create(animation);
 
     // Chạy Animation
     this->runAction(RepeatForever::create(animate));
 
-    // Hẹn thời gian để tắt bẫy sau 0.8 giây
-    this->scheduleOnce([this](float) { this->deactivateTrap(); }, 0.8f, "deactivate_trap");
+    // Hẹn thời gian để tắt bẫy sau 1.0 giây
+    this->scheduleOnce([this](float) { this->deactivateTrap(); }, 1.0f, "deactivate_trap");
 
 }
 

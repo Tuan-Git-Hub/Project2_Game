@@ -63,7 +63,7 @@ void WindZone::doActionToAll()
         if (objBody)
         {
             AXLOG("Khỗi lượng của đối tượng:  %.3f", objBody->getMass());
-            objBody->applyForce(DeftForceVector);
+            objBody->applyImpulse(DeftForceVector);
             AXLOG("✅ Đã đẩy đối tượng: %p", obj);
         }
         else

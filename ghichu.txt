@@ -33,5 +33,14 @@ Thay đổi: tạo một lớp mới là SensorZone (kế thừa từ ax::Node),
 Thay đổi: 
 + Trampoline (quay vật thể)
 + Có thể nhận sự kiện đối với SensorZone
-+ Tách phương thức doAction() của SensorZone thành doActionToAll() - tác động lên toàn bộ vật thể trong SensorZone và doActionToOne(): tác động lên Một vật thể trong SensorZone 
++ Tách phương thức doAction() của SensorZone thành doActionToAll() - tác động lên toàn bộ vật thể trong SensorZone và doActionToOne(): tác động lên Một0000000000000 vật thể trong SensorZone 
 Hạn chế: Đẩy vật thể (vật lý)
+
+19/04/2025:
+- Thêm âm thanh vào một số bẫy của Lv2: 
+	+ Trampoline: chạy khi kích hoạt
+	+ Saw: Tạm thời để command vì khi chạy rất ồn
+	+ Spike: không để âm thanh đặc biệt (dự kiến chỉ chạy âm thanh nhân vật nhận sát thương)
+	+ Ice: chưa xử lý được vì cách nhận sự kiện là OnContactPreSolve (gọi liên tục)
+- Thêm âm thanh vào một số bẫy của Lv3:
+	+ Fire: chạy khi kích hoạt

@@ -70,6 +70,10 @@ void Saw::deactivateTrap()
 
 void Saw::runAnimation()
 {
+
+    // Chèn âm thanh
+    // int audio = AudioEngine::play2d("sound_game/mechanic/circular-saw-cut.wav", true, 0.4f);
+
     // Load sprite sheet nếu chưa có
     if (!SpriteFrameCache::getInstance()->isSpriteFramesWithFileLoaded("Traps/Saw/Saw_On.plist"))
         SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Traps/Saw/Saw_On.plist");

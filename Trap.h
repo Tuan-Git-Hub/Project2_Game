@@ -4,6 +4,7 @@
 #    define __TRAP_H__
 
 #    include "axmol.h"
+#   include "audio/AudioEngine.h"
 
 enum class TrapType : int
 {

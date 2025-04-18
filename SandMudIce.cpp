@@ -80,6 +80,8 @@ void SandMudIce::dealDamage(ax::Node* player)
             return;
         }
     }
+    else
+        AudioEngine::stopAll();
 }
 
 void SandMudIce::activateTrap()

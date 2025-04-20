@@ -1,0 +1,37 @@
+Trích thư mục sound_game
+
+1. Nhảy:
+1.1. Nhảy một lần: sound_game/jump/jump1.ogg
+1.2. Double jump: sound_game/jump/jump2.ogg
+
+2. Di chuyển, trên các dạng địa hinh:
+2.1. Thảm: 
+    + Đi ngang, hoặc nhảy thấp: sound_game/footstep/footstep_carpet_003.ogg
+    + Rơi từ trên cao: sound_game/footstep/footstep_carpet_002.ogg
+2.2. Bê tông: 
+    + Đi ngang, hoặc nhảy thấp: sound_game/footstep/footstep_concrete_004.ogg
+    + Rơi từ trên cao: sound_game/footstep/footstep_concrete_001.ogg
+2.3. Cỏ: 
+    + Đi ngang, hoặc nhảy thấp: sound_game/footstep/footstep_grass_003.ogg
+    + Rơi từ trên cao: sound_game/footstep/footstep_grass_002.ogg
+2.4. Tuyết:
+    + Rơi từ trên cao: sound_game/footstep/footstep_snow_000.ogg  
+2.5. Gỗ:
+    + Đi ngang, hoặc nhảy thấp: sound_game/footstep/footstep_wood_000.ogg
+    + Rơi từ trên cao: sound_game/footstep/footstep_wood_004.ogg
+2.6: Khác
+    + Đi ngang, hoặc nhảy thấp: sound_game/footstep/footstep05.ogg
+    + Rơi từ trên cao: sound_game/footstep/footstep08.ogg
+
+3. Nhân vật nhận sát thương: sound_game/error/error_006.ogg
+
+4. Lỗi game (thông báo lỗi): sound_game/error/error_002.ogg
+
+5. Click chuột (chọn gì đó): sound_game/click/click_001.ogg
+
+6. Hoàn thành level (qua màn): sound_game/music/Audio (Hit)/jingles-hit_09.ogg
+
+7. Main menu: sound_game/music/Idents/Raggae ident.ogg
+
+8. Nhạc màn chơi:
+

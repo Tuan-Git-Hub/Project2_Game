@@ -33,5 +33,18 @@ Trích thư mục sound_game
 
 7. Main menu: sound_game/music/Idents/Raggae ident.ogg
 
-8. Nhạc màn chơi:
+8. Nhạc màn chơi: Có thể lựa chọn một trong các file sau:
+    +   sound_game/music/Loops/Drumming Sticks.ogg
+    +   sound_game/music/Loops/Cheerful Annoyance.ogg
+    +   sound_game/music/Loops/Farm Frolics.ogg
+    +   sound_game/music/Loops/Mission Plausible.ogg
+    +   sound_game/music/Loops/Swinging Pants.ogg
+    +   sound_game/music/Loops/Time Driving.ogg
+
+9. SFX:
+9.1. Trampoline (khi đẩy): sound_game/mechanic/hydraulic-cut.wav
+9.2. Fan (quạt gió): sound_game/mechanic/fan-94808.mp3
+9.3. Fire (khi bật lửa): sound_game/mechanic/fire-cut.wav
+9.4. Rock Head (khi đến biên - va chạm vào tường): sound_game/mechanic/hitting-metal-cut.wav
+9.5. Ice (tiếng trơn trượt khi đi trên băng): sound_game/mechanic/cartoon-slide-whistle-up-3-176652.mp3
 

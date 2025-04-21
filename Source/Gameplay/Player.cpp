@@ -27,18 +27,13 @@ bool Player::init()
     {
         return false;
     }
-    // Load các file ảnh vào cache
-    // SpriteManager::getInstance().loadSpriteFrames({ fileImage_idle_player, fileImage_run_player, fileImage_doublejump_player, fileImage_walljump_player, fileImage_hit_player });
-    // SpriteManager::getInstance().loadTextures({
-    //     { "playerJump", fileImage_jump_player },
-    //     { "playerFall", fileImage_fall_player } 
-    // });
+
     // Lấy thông tin HP từ GameManager
     this->_hp = GameManager::getInstance().getNumberOfHearts();
     // Tạo hành động đứng yên Idle
     auto idleFrames = SpriteManager::getInstance().createVectorSpriteFrame("Player_1_Idle_%d.png", 11);
     this->initWithSpriteFrame(idleFrames.front());
-    auto idleAnimation = Animation::createWithSpriteFrames(idleFrames, 1.0f/20);
+    auto idleAnimation = Animation::createWithSpriteFrames(idleFrames, 1.0f/10);
     this->_idleAction =  RepeatForever::create(Animate::create(idleAnimation));
     _idleAction->retain(); // Lưu lại hành động, tránh phải tạo lần sau, vì dùng nhiều
     _currentState = PlayerState::Idle; // Đặt trạng thái ban đầu cơ bản là đứng yên
@@ -83,25 +78,29 @@ bool Player::init()
     auto hitFrames = SpriteManager::getInstance().createVectorSpriteFrame("Player_1_Hit_%d.png", 7);
     auto hitAnimation = Animation::createWithSpriteFrames(hitFrames, 1.0f/20);
     this->_hitAction = Sequence::create(
-        Repeat::create(Animate::create(hitAnimation), 3),
-        CallFunc::create([=] { if (isOnGround) this->idle(); }),
+        Repeat::create(Animate::create(hitAnimation), 2),
+        DelayTime::create(0.5f),
+        CallFunc::create([=] { 
+            if (_touchpoint) this->idle(); 
+            else this->fall();
+            isHit = false; }),
         nullptr
     );
     _hitAction->retain();
 
-
-    // Tạo physicsbody
-    _psbodyPlayer = PhysicsBody::createBox(Size(this->getContentSize().x * 0.6f, this->getContentSize().y * 0.6f), PhysicsMaterial(1.0f, 0.0f, 0.0f));
-    _psbodyPlayer->setPositionOffset(Vec2(0, -5)); // Dời PhysicsBody
+    // Tạo physicsbody this->getContentSize().x * 0.6f, this->getContentSize().y * 0.6f
+    _psbodyPlayer = PhysicsBody::createBox(Size(Vec2(18, 26)), PhysicsMaterial(1.0f, 0.0f, 0.0f));
+    _psbodyPlayer->setPositionOffset(Vec2(0, -3)); // Dời PhysicsBody
     _psbodyPlayer->setDynamic(true);
     _psbodyPlayer->setCategoryBitmask(ObjectBitmask::Player); // Gán bitmask
     _psbodyPlayer->setContactTestBitmask(0xFFFFFFFF); // Cần để lắng nghe kiểm tra va chạm với toàn bộ
-    _psbodyPlayer->setCollisionBitmask(0xFFFFFFFF); // Cho va chạm với tất cả
+    _psbodyPlayer->setCollisionBitmask(0xFFFFFFFF); // Cho va chạm
     _psbodyPlayer->setAngularVelocity(0); // Vô hiệu hóa tốc độ xoay
     _psbodyPlayer->setRotationEnable(false); // Không cho phép vật thể xoay
-
+    
+    
     this->addComponent(_psbodyPlayer);
-    this->setTag(2); // Gán tag để nhận diện Player
+    
 
     // Gán các sự kiện
     // Chạm nút
@@ -112,7 +111,7 @@ bool Player::init()
     // Thêm mạng HP
     GameManager::getInstance().addAHeartForPlayer = [this]() { this->_hp++; };
 
-    scheduleUpdate();
+    scheduleUpdateWithPriority(2);
     return true;
 }
 
@@ -154,17 +153,23 @@ void Player::setState(PlayerState state)
 // Hàm gọi action
 void Player::idle()
 {
-    _velocity.setZero();
+    _velocity = _psbodyPlayer->getVelocity();
+    if (isOnIce)
+        _velocity.y = 0.0f;
+    else
+        _velocity.setZero();
+    _psbodyPlayer->setVelocity(_velocity);
+
     isOnGround = true;
     hasDoubleJump = true;
     setState(PlayerState::Idle);
-    _psbodyPlayer->setVelocity(_velocity);
 }
 
 void Player::moveLeft()
 {
     setScaleX(-1);
     isTouchLeftWall = false;
+    _velocity = _psbodyPlayer->getVelocity();
     if(isOnGround)
     {
         _velocity.x = -_speedRun;
@@ -172,7 +177,7 @@ void Player::moveLeft()
     }
     else
     {
-        _velocity.x = -_speedRun/2;
+        _velocity.x = -_speedRun;
     }
     _psbodyPlayer->setVelocity(_velocity);
 }
@@ -181,6 +186,7 @@ void Player::moveRight()
 {
     setScaleX(1);
     isTouchRightWall = false;
+    _velocity = _psbodyPlayer->getVelocity();
     if(isOnGround)
     {
         _velocity.x = _speedRun;
@@ -188,40 +194,55 @@ void Player::moveRight()
     }
     else
     {
-        _velocity.x = _speedRun/2;
+        _velocity.x = _speedRun;
     }
     _psbodyPlayer->setVelocity(_velocity);
 }
 
 void Player::jump()
 {
+    _velocity = _psbodyPlayer->getVelocity();
     _velocity.y = _speedJump;
+    _psbodyPlayer->setVelocity(_velocity);
+
     isOnGround = false;
     setState(PlayerState::Jump);
-    _psbodyPlayer->setVelocity(_velocity);
 }
 
 void Player::jump_while_on_wall()
 {
+    _velocity = _psbodyPlayer->getVelocity();
     if (isTouchLeftWall)
-        _velocity.x = -_speedRun;
+    {
+        setScaleX(-1);
+        _velocity.x = -50.0f;
+    }
     else if (isTouchRightWall)
-        _velocity.x = _speedRun;
-    this->jump();
+    {
+        setScaleX(1);
+        _velocity.x = 50.0f;
+    }
+    _velocity.y = _speedJump;
+    _psbodyPlayer->setVelocity(_velocity);
+
+    setState(PlayerState::Jump);
 }
 
 void Player::fall()
 {
+    _velocity = _psbodyPlayer->getVelocity();
     isOnGround = false;
     setState(PlayerState::Fall);
 }
 
 void Player::double_jump()
 {
+    _velocity = _psbodyPlayer->getVelocity();
     _velocity.y = _speedJump;
+    _psbodyPlayer->setVelocity(_velocity);
+
     hasDoubleJump = false;
     setState(PlayerState::DoubleJump);
-    _psbodyPlayer->setVelocity(_velocity);
 }
 
 void Player::wall_jump_Left()
@@ -230,7 +251,6 @@ void Player::wall_jump_Left()
     isTouchRightWall = false;
     hasDoubleJump = true;
     setState(PlayerState::WallJump);
-    _psbodyPlayer->setVelocity(_velocity);
 }
 
 void Player::wall_jump_Right()
@@ -239,21 +259,23 @@ void Player::wall_jump_Right()
     isTouchLeftWall = false;
     hasDoubleJump = true;
     setState(PlayerState::WallJump);
-    _psbodyPlayer->setVelocity(_velocity);
 }
 
 void Player::hit()
 {
-    _velocity.x = (this->getScaleX()) * -150.0f;
+    _velocity = _psbodyPlayer->getVelocity();
+    _velocity.x = (this->getScaleX()) * -50.0f;
     _velocity.y = 200.0f;
-    setState(PlayerState::Hit);
     _psbodyPlayer->setVelocity(_velocity);
+
+    isHit = true;
+    setState(PlayerState::Hit);
 }
 
 // Các hàm kích hoạt khi nhấn nút
 void Player::onLeftKeyPressed()
 {
-    if (_currentState != PlayerState::Hit && !isTouchRightWall)
+    if (!isHit && !isTouchRightWall)
     {
         AXLOG("Player move left");
         this->moveLeft();
@@ -262,7 +284,7 @@ void Player::onLeftKeyPressed()
 
 void Player::onRightKeyPressed()
 {
-    if (_currentState != PlayerState::Hit && !isTouchLeftWall)
+    if (!isHit && !isTouchLeftWall)
     {
         AXLOG("Player move right");
         this->moveRight();
@@ -271,7 +293,7 @@ void Player::onRightKeyPressed()
 
 void Player::onJumpKeyPressed()
 {
-    if (_currentState != PlayerState::Hit)
+    if (!isHit)
     {    
         if (isOnGround)
         {
@@ -293,74 +315,106 @@ void Player::onJumpKeyPressed()
 
 void Player::onKeyReleased()
 {
-    if (_currentState != PlayerState::Hit)
+    if (!isHit)
     {
         if (isOnGround)
+        {
             this->idle(); 
+        }
     }
 }
 
+// Kiểm tra điều chỉnh trước va chạm
+void Player::checkBeforeCollision()
+{
+    _position = this->getPosition();
+    auto rayCastEnd = _position + Vec2(0, -25);
+
+    this->getScene()->getPhysicsWorld()->rayCast(
+        [this](PhysicsWorld& world, const PhysicsRayCastInfo& info, void* data) {
+            auto body = info.shape->getBody();
+            if (body->getCategoryBitmask() == ObjectBitmask::Ground) 
+            {
+                _velocity = _psbodyPlayer->getVelocity();
+                AXLOG("Player close to the ground");
+                if (_velocity.y < -300) // Giảm tốc nếu quá nhanh
+                {
+                    _velocity.y *= 0.5f;
+                    _psbodyPlayer->setVelocity(_velocity);
+                }
+            }
+            return true;
+        },
+        _position,
+        rayCastEnd,
+        nullptr
+    );
+}
+
+// Điều khiển khi va chạm bắt đầu
 void Player::handleBeginCollisionWith(Node* node, PhysicsContact& contact)
 {
     auto contactData = contact.getContactData(); // Lấy dữ liệu
-    _touchpoint += contactData->count; // cộng số điểm tiếp xúc
     auto norVector = contactData->normal; // Lấy vector pháp tuyến của va chạm
     auto pointContact = contactData->points[0]; // Lấy điểm va chạm
+    _touchpoint += contactData->count; // cộng số điểm tiếp xúc
     AXLOG("contact count: %d", _touchpoint);
-    AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
-    AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
-    
-    //Lưu thông tin va chạm nếu trùng sẽ bỏ qua
-    if (_contactDataPoint.first.isZero() && _contactDataPoint.second.isZero())
+    // AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+    // AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
+
+    //Lưu thông tin va chạm nếu trùng điểm trong 1 thời gian ngắn sẽ bỏ qua
+    static std::pair<ax::Vec2, ax::Vec2> _contactDataPoint = {Vec2::ZERO, Vec2::ZERO};
+    static double timeContactBefore = 0;
+    auto timeContactNow = utils::gettime();
+    if ( _contactDataPoint.first.distance(norVector) < 0.1f && _contactDataPoint.second.distance(pointContact) < 0.1f && timeContactNow - timeContactBefore < 1)
+        return;
+    else
     {
         _contactDataPoint.first = norVector;
         _contactDataPoint.second = pointContact;
+        timeContactBefore = timeContactNow;
     }
-    else
-    {
-        if (_contactDataPoint.first == norVector && _contactDataPoint.second == pointContact)
-            return;
-    }
-    if (node->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::Ground)
+    // Nếu đang bị Hit thì bỏ qua
+    if (isHit)
+        return;
+
+    // Va chạm với các loại ground
+    auto categoryBitmask = node->getPhysicsBody()->getCategoryBitmask();
+    if (categoryBitmask == ObjectBitmask::Ground || 
+        categoryBitmask == ObjectBitmask::Sand || 
+        categoryBitmask == ObjectBitmask::Mud || 
+        categoryBitmask == ObjectBitmask::Ice ||
+        categoryBitmask == ObjectBitmask::Box
+    )
     {
         _position = this->getPosition();
-        if (node->getName() == "WallTest") // Dùng cho bản test scene 3
-            norVector *= -1.0f;
-
         if (!isOnGround)
         {
             // Tính dot product (tích vô hướng)
             // Khi tính tích vô hướng 2 vector mà 2 vector có chiều dài là 1 thì sẽ ra cos(θ) góc giữa 2 vector
-            if (std::abs(norVector.dot(Vec2(0, -1))) > 0.7f && _position.y - pointContact.y > 0) // Xem Lực hướng xuống hoặc lên với điểm va chạm để biết trạng thái player
+            if (std::abs(norVector.dot(Vec2(0, -1))) > 0.7f && _position.y >= pointContact.y) // Xem Lực hướng xuống hoặc lên với điểm va chạm để biết trạng thái player
             {
-                AXLOG("Player is on ground");
-                AXLOG("contact count: %d", _touchpoint);
-                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
-                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
+                AXLOG("Player is on soil or box");
                 this->idle();
             }
-            else if (std::abs(norVector.dot(Vec2(0, 1))) > 0.7f && _position.y - pointContact.y < 0)
+            else if (std::abs(norVector.dot(Vec2(0, 1))) > 0.7f && _position.y <= pointContact.y)
             {
                 AXLOG("Player is hit head");
-                AXLOG("contact count: %d", _touchpoint);
-                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
-                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 this->fall();
+                if (categoryBitmask == ObjectBitmask::Box)
+                {
+                    auto box = static_cast<Item*>(node);
+                    box->updateItem();
+                }
             }
-            else if (std::abs(norVector.dot(Vec2(1, 0))) > 0.7f && _position.x - pointContact.x < 0)
+            else if (std::abs(norVector.dot(Vec2(1, 0))) > 0.7f && _position.x <= pointContact.x)
             {
                 AXLOG("Player is on left wall");
-                AXLOG("contact count: %d", _touchpoint);
-                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
-                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 this->wall_jump_Left();
             }
-            else if (std::abs(norVector.dot(Vec2(-1, 0))) > 0.7f && _position.x - pointContact.x > 0)
+            else if (std::abs(norVector.dot(Vec2(-1, 0))) > 0.7f && _position.x >= pointContact.x)
             {
                 AXLOG("Player is on right wall");
-                AXLOG("contact count: %d", _touchpoint);
-                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
-                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 this->wall_jump_Right();
             }
         }
@@ -369,24 +423,22 @@ void Player::handleBeginCollisionWith(Node* node, PhysicsContact& contact)
             if (std::abs(norVector.dot(Vec2(1, 0))) > 0.7f && _position.x - pointContact.x < 0)
             {
                 AXLOG("Player touch the left wall");
-                AXLOG("contact count: %d", _touchpoint);
-                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
-                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 isTouchLeftWall = true;
                 this->idle();
             }
             else if (std::abs(norVector.dot(Vec2(-1, 0))) > 0.7f && _position.x - pointContact.x > 0)
             {
                 AXLOG("Player touch the right wall");
-                AXLOG("contact count: %d", _touchpoint);
-                AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
-                AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
                 isTouchRightWall = true;
                 this->idle();
             }
         }
+        AXLOG("contact count: %d", _touchpoint);
+        AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+        AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
     }
-    if (node->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::SpikeTrap)
+    // Va chạm với spike trap
+    else if (categoryBitmask == ObjectBitmask::SpikeTrap)
     {
         AXLOG("Player touch the spike trap");
         AXLOG("contact count: %d", _touchpoint);
@@ -396,8 +448,72 @@ void Player::handleBeginCollisionWith(Node* node, PhysicsContact& contact)
         this->hit();
         this->delete_A_HP();
     }
+    // Va chạm với saw trap
+    else if (categoryBitmask == ObjectBitmask::SawTrap)
+    {
+        AXLOG("Player touch the spike trap");
+        AXLOG("contact count: %d", _touchpoint);
+        AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+        AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
+        
+        this->hit();
+        this->delete_A_HP();
+    }
+    // Va chạm với Trampoline
+    else if (categoryBitmask == ObjectBitmask::Trampoline)
+    {
+        AXLOG("Player touch the trampoline trap");
+        AXLOG("contact count: %d", _touchpoint);
+        AXLOG("contact normal: %f, %f", norVector.x, norVector.y);
+        AXLOG("contact point: %f, %f", pointContact.x, pointContact.y);
+
+        this->stopAllActions();;
+        this->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player_1_Idle_6.png"));
+        isHit = true;
+        _velocity = Vec2(0, 500);
+        _velocity.rotate(Vec2::ZERO, AX_DEGREES_TO_RADIANS(node->getRotation() * -1)); // Xoay theo trampolinee
+        _psbodyPlayer->setVelocity(_velocity);
+        this->scheduleOnce([this](float) { isHit = false; }, 0.08f, "back_to_normal"); // Trì hoãn để không nhận hành động nào khác trong 1 thời gian
+    }
 }
 
+// Điều khiển khi duy trì va chạm
+void Player::handlePreSolveCollisionWith(Node* node, PhysicsContact& contact, PhysicsContactPreSolve& solve)
+{
+    // Nếu đang bị Hit thì bỏ qua
+    if (isHit)
+        return;
+
+    auto categoryBitmask = node->getPhysicsBody()->getCategoryBitmask();
+    // Nếu đang duy trì va chạm với spike trap thì tiếp tục mất máu
+    if (categoryBitmask == ObjectBitmask::SpikeTrap)
+    {
+        AXLOG("Player continues to touch the spike trap");
+        this->hit();
+        this->delete_A_HP();
+    }
+    // Nếu tiếp tục chạm sand thì làm chậm
+    else if (categoryBitmask == ObjectBitmask::Sand)
+    {
+        AXLOG("Player continues to touch the sand");
+        isOnSand = true;
+    }
+    // Nếu tiếp tục chạm mud thì làm đứng im
+    else if (categoryBitmask == ObjectBitmask::Mud)
+    {
+        AXLOG("Player continues to touch the mud");
+        isOnMud = true;
+    }
+    // Nếu tiếp tục chạm ice thì tăng tốc
+    else if (categoryBitmask == ObjectBitmask::Ice)
+    {
+        AXLOG("Player continues to touch the ice");
+        isOnIce = true;
+    }
+
+}
+
+// Điều khiển khi va chạm tách ra
 void Player::handleSeparateCollisionWith(Node* node, PhysicsContact& contact)
 {
     auto contactData = contact.getContactData(); // Lấy dữ liệu
@@ -414,10 +530,29 @@ void Player::handleSeparateCollisionWith(Node* node, PhysicsContact& contact)
         isOnGround = false;
         isTouchLeftWall = false;
         isTouchRightWall = false;
+        isOnSand = false;
+        isOnMud = false;
+        isOnIce = false;
+        return;
     }
-    // Xóa đi thông tin va chạm vì đã tách ra
-    _contactDataPoint.first.setZero();
-    _contactDataPoint.second.setZero();
+    // Thoát Va chạm với các loại ground
+    auto categoryBitmask = node->getPhysicsBody()->getCategoryBitmask();
+    if (categoryBitmask == ObjectBitmask::Sand)
+    {
+        isOnSand = false;
+    }
+    else if (categoryBitmask == ObjectBitmask::Mud)
+    {
+        isOnMud = false;
+    }
+    else if (categoryBitmask == ObjectBitmask::Ice)
+    {
+        isOnIce = false;
+        if (isOnGround)
+            this->idle();
+    }
+
+    
 }
 
 void Player::delete_A_HP()
@@ -429,21 +564,52 @@ void Player::delete_A_HP()
 // Hàm update
 void Player::update(float dt)
 {
-    _velocity = _psbodyPlayer->getVelocity();
-    if (_currentState != PlayerState::Hit)
-    {    
-        if (_currentState != PlayerState::WallJump && _velocity.y < -1)
-        {
-            this->fall();
-        }
+    _position = this->getPosition();
+    if (_position.y < -100.0f)
+    {
+        GameManager::getInstance().createSceneGameOver();
+        return;
+    }
+    if (isHit)
+    {
+        AXLOG("velocityI: %f, %f", _psbodyPlayer->getVelocity().x, _psbodyPlayer->getVelocity().y);
+        return;
+    }   
+    if (!isTouchLeftWall && !isTouchRightWall && _psbodyPlayer->getVelocity().y < -1)
+    {
+        this->fall();
+        this->checkBeforeCollision();
+    }
+    else if (_currentState == PlayerState::WallJump)
+    {
+        _velocity = _psbodyPlayer->getVelocity();
+        _velocity.y = -50.0f;
+        _psbodyPlayer->setVelocity(_velocity);
+    }
+    else if (isOnSand)
+    {
+        _velocity = _psbodyPlayer->getVelocity();
+        _velocity.x *= 0.4f;
+        _psbodyPlayer->setVelocity(_velocity);
+    }
+    else if (isOnMud)
+    {
+        _velocity = _psbodyPlayer->getVelocity();
+        _velocity.x = 0.0f;
+        _psbodyPlayer->setVelocity(_velocity);
+    }
+    else if (isOnIce)
+    {
+        _velocity = _psbodyPlayer->getVelocity();
+        _velocity *= 1.05f;
+        _psbodyPlayer->setVelocity(_velocity);
     }
 
-    //AXLOG("position: %f, %f, %f", _position.x, _position.y, this->getPositionY());
-    AXLOG("velocity: %f, %f", _velocity.x, _velocity.y);
-    //AXLOG("velocity: %f, %f", this->getPhysicsBody()->getVelocity().x, this->getPhysicsBody()->getVelocity().y);
+    //AXLOG("isonground: %d", isOnGround);
+    //AXLOG("velocityI: %f, %f", _psbodyPlayer->getVelocity().x, _psbodyPlayer->getVelocity().y);
+    //AXLOG("UDvelocity: %f, %f", _velocity.x, _velocity.y);
     //AXLOG("velocity: %f", this->getPhysicsBody()->getVelocityAtLocalPoint(_position).y);
 }
-
 
 // Hàm hủy
 Player::~Player()

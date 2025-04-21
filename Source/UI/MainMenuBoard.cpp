@@ -1,6 +1,6 @@
 #include "MainMenuBoard.h"
 #include "SpriteManager.h"
-#include "Level_1_Scene.h"
+#include "SceneManager.h"
 
 using namespace ax;
 
@@ -68,9 +68,8 @@ bool MainMenuBoard::init()
 
 void MainMenuBoard::onNewGame(Object* sender)
 {
-    AXLOG("Frist Scene");
-    auto firstScene = utils::createInstance<Level_1_Scene>();
-    _director->replaceScene(firstScene);
+    AXLOG("New Game!!");
+    SceneManager::create_and_replace_currentScene(SceneType::Level_1_Scene);
 }
 
 void MainMenuBoard::onOptions(Object* sender)

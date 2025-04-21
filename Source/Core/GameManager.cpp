@@ -1,6 +1,7 @@
 #include "GameManager.h"
-#include "GameOverScene.h"
+#include "SceneManager.h"
 #include "SpriteManager.h"
+#include "GameObjectManager.h"
 
 using namespace ax;
 
@@ -39,9 +40,23 @@ void GameManager::minusAHeart()
 // Thêm điểm và gọi hàm vẽ
 void GameManager::addPointPlayer()
 {
-    _scorePlayer++;
-    drawScore();
+    _scorePlayer += 1;
+    drawScore(_scorePlayer);
 }
+
+// Thêm trái cây xuất hiện tại vị trí trong scene
+void GameManager::spawnFruitsAt(const Vec2& po, int sl)
+{
+    for (int i = 0; i < sl; i++)
+    {
+        auto fruit = GameObjectManager::createItem(ItemType::Fruits);
+        fruit->getPhysicsBody()->setDynamic(true); // bật dynamic để chịu ảnh hưởng vật lý
+        fruit->getPhysicsBody()->setVelocity(Vec2(random(-200, 200), random(0, 100))); // set tốc độ và góc độ bắn ra
+        Director::getInstance()->getRunningScene()->getChildByName("MapGame")->addChild(fruit); // add vào scene
+        fruit->scheduleOnce([=](float) { fruit->setPosition(po); }, 0.1f, "fruits in box"); // quan trọng là phải gọi update hoặc cho vào update để ở frame sau scene nhận diện và render đúng vị trí
+    }
+}
+
 
 // reset
 void GameManager::resetGameManager()
@@ -49,15 +64,13 @@ void GameManager::resetGameManager()
     _numberOfHearts = 3;
     _scorePlayer = 0;
     _timeLeft = 9.0f;
+    _pointToAddHeart = 100;
 }
 
 // Tạo scene gameover và thay thế scene
 void GameManager::createSceneGameOver()
 {
-    auto dir = Director::getInstance();
-    auto gameOverScene = utils::createInstance<GameOverScene>();
-    gameOverScene->setBackgroundScreenshot(SpriteManager::getInstance().getScreenshot(dir->getRunningScene()));
-    dir->replaceScene(gameOverScene);
+    SceneManager::create_and_replace_currentScene(SceneType::GameOver_Scene);
 }
 
 void GameManager::update(float dt)
@@ -71,7 +84,7 @@ void GameManager::update(float dt)
         }
         else if (_timeLeft <= 0.0f)
         {
-            AXLOG("time out");
+            AXLOG("Time out");
             this->createSceneGameOver();
             return;
         }
@@ -81,5 +94,11 @@ void GameManager::update(float dt)
         AXLOG("Player die");
         this->createSceneGameOver();
         return;
+    }
+    if (_scorePlayer >= _pointToAddHeart)
+    {
+        AXLOG("Player add one heart");
+        this->addAHeart();
+        _pointToAddHeart += 100;
     }
 }

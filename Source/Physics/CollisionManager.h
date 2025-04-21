@@ -8,6 +8,7 @@ class CollisionManager
 public:
     static void init();
     static bool onContactBegin(ax::PhysicsContact& contact);
+    static bool onContactPreSolve(ax::PhysicsContact& contact, ax::PhysicsContactPreSolve& solve);
     static void onContactSeparate(ax::PhysicsContact& contact);
 };
 

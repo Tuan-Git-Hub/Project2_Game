@@ -20,7 +20,7 @@ bool CameraController::init(Node* target)
     if (!Node::init())
         return false;
     this->target = target;
-    camera = Camera::createOrthographic(640, 360, 0.1f, 1000);
+    camera = Camera::createOrthographic(448, 252, 0.1f, 1000); // 640x360
     this->addChild(camera);
     this->scheduleUpdate();
     return true;

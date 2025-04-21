@@ -27,6 +27,8 @@ bool MobileButtons::init()
     {
         return false;
     }
+    // Đặt tên
+    this->setName("Mobile_Buttons");
 
     // Tạo nút di chuyển sang trái
     auto leftMoveButton = SpriteManager::getInstance().createSprite("leftButton");
@@ -73,7 +75,7 @@ bool MobileButtons::init()
         }
     };
 
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(leftMoveListener ,leftMoveButton);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(leftMoveListener ,this);
 
     // Tạo EventListenerTouchOneByOne cho nút di chuyển sang phải
     auto rightMoveListener = EventListenerTouchOneByOne::create();
@@ -102,7 +104,7 @@ bool MobileButtons::init()
         }
     };
 
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(rightMoveListener ,rightMoveButton);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(rightMoveListener ,this);
 
 
     // Tạo EventListenerTouchOneByOne cho nút nhảy
@@ -128,18 +130,18 @@ bool MobileButtons::init()
         isHoldingJump = false;
     };
 
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(jumpMoveListener ,jumpMoveButton);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(jumpMoveListener ,this);
 
     // Tạo sự kiện nhấn nút ( sau xóa bỏ )
     auto keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode code, Event* event) {
         if (code == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
         {
-            rightMove();
+            isHoldingMoveRight = true;
         }
         else if (code == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
         {
-            leftMove();
+            isHoldingMoveLeft = true;
         }
         else if (code == EventKeyboard::KeyCode::KEY_UP_ARROW)
         {
@@ -149,11 +151,13 @@ bool MobileButtons::init()
     keyboardListener->onKeyReleased = [this](EventKeyboard::KeyCode code, Event* event) {
         if (code == EventKeyboard::KeyCode::KEY_RIGHT_ARROW || code == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
         {
+            isHoldingMoveRight = false;
+            isHoldingMoveLeft = false;
             stopMove();
         }
     };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
-    scheduleUpdate(); // Cập nhật mỗi frame
+    scheduleUpdateWithPriority(1); // Cập nhật mỗi frame
 
     return true;
 }

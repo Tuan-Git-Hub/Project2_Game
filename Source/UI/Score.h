@@ -6,15 +6,12 @@
 class Score : public ax::Node
 {
 private:
-    int score_player = 1996;
     ax::Label* scoreLabel;
 public:
     static Score* createScoreLabel();
     bool init();
 
-    void addPoints();
-    int getScorePlayer() const { return score_player; };
-
+    void drawPoints(int point);
 };
 
 #endif  // __SCORE_H__

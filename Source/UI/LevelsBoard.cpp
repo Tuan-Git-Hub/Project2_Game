@@ -1,8 +1,7 @@
 #include "LevelsBoard.h"
 #include "SpriteManager.h"
 #include "MainMenuBoard.h"
-#include "Level_1_Scene.h"
-#include "TestTrapScene3.h"
+#include "SceneManager.h"
 
 using namespace ax;
 
@@ -67,21 +66,19 @@ bool LevelsBoard::init()
 
 void LevelsBoard::selectLevel_1()
 {
-    AXLOG("Scene Level 1");
-    auto firstScene = utils::createInstance<Level_1_Scene>();
-    _director->replaceScene(firstScene);
+    AXLOG("Choose Level 1");
+    SceneManager::create_and_replace_currentScene(SceneType::Level_1_Scene);
 }
 
 void LevelsBoard::selectLevel_2()
 {
-    AXLOG("Scene Level 2");
+    AXLOG("Choose Level 2");
 }
 
 void LevelsBoard::selectLevel_3()
 {
-    AXLOG("Scene Level 3");
-    auto scene3 = utils::createInstance<TestTrapScene3>();
-    _director->replaceScene(scene3);
+    AXLOG("Choose Level 3");
+    SceneManager::create_and_replace_currentScene(SceneType::Level_3_Scene);
 }
 
 void LevelsBoard::onReturn()

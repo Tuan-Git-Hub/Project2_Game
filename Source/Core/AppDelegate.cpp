@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "MainMenuScene.h"
+#include "SceneManager.h"
 
 #define USE_AUDIO_ENGINE 1
 
@@ -80,7 +80,7 @@ bool AppDelegate::applicationDidFinishLaunching()
                                     ResolutionPolicy::SHOW_ALL);
 
     // create a scene. it's an autorelease object
-    auto scene = utils::createInstance<MainMenuScene>();
+    auto scene = SceneManager::createScene(SceneType::MainMenu_Scene);
 
     // run
     director->runWithScene(scene);

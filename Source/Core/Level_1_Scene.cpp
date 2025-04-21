@@ -13,8 +13,6 @@ static int s_sceneID = 2000;
 
 bool Level_1_Scene::init()
 {
-    //////////////////////////////
-    // 1. super init first
     if (!Scene::initWithPhysics())
     {
         return false;
@@ -28,33 +26,19 @@ bool Level_1_Scene::init()
     //Tạo trọng lực
     getPhysicsWorld()->setGravity(Vec2(0, -980));
     
-    this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     // Chọn level để game manager tạo logic game
     GameManager::getInstance().selectLevel(GameManager::Level::LEVEL_1);
 
-    // Some templates (uncomment what you  need)
-    _touchListener                 = EventListenerTouchAllAtOnce::create();
-    _touchListener->onTouchesBegan = AX_CALLBACK_2(Level_1_Scene::onTouchesBegan, this);
-    _touchListener->onTouchesMoved = AX_CALLBACK_2(Level_1_Scene::onTouchesMoved, this);
-    _touchListener->onTouchesEnded = AX_CALLBACK_2(Level_1_Scene::onTouchesEnded, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
-    /////////////////////////////
-
-    // Hình background cho main menu scene
-    // auto background = Label::createWithTTF("BACK GROUND LEVEL 1", "fonts/Marker Felt.ttf", 50);
-    // background->setPosition(Vec2(150, 160));
-    // background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 5 * 4 + origin.y));
-    // this->addChild(background, 1);
-    
     // Tạo map
-    auto map = LevelManager::getInstance().loadLevel(LevelManager::Level::LEVEL_1);
-    map->setPosition(Vec2(70, 20));
+    auto map = LevelManager::loadLevel(Level::LEVEL_1);
+    map->setPosition(Vec2(0, 0));
     this->addChild(map);
 
     // Tạo player
     auto player1 = Player::create();
-    player1->setPosition(Vec2(100, 200));
-    this->addChild(player1);
+    player1->setPosition(Vec2(660, 110));
+    this->addChild(player1, -1);
 
     // Tạo camera cho player
     auto cameraPlayer = CameraController::create(player1);
@@ -68,7 +52,6 @@ bool Level_1_Scene::init()
     this->addChild(uiLayer, 100); // Thêm uiLayer vào scene với z-index = 100 để đảm bảo luôn ở trên các đối tượng khác   
     // Tạo nút bấm
     auto buttons = UIManager::createMobileButtons();
-    buttons->setName("Mobile_Buttons");
     uiLayer->addChild(buttons); // Thêm vào node các UI cần
     // Tạo máu nhân vật
     auto heartLives = UIManager::createHeartLives();
@@ -110,128 +93,30 @@ bool Level_1_Scene::init()
     return true;
 }
 
-void Level_1_Scene::onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event)
-{
-    for (auto&& t : touches)
-    {
-        // AXLOGD("onTouchesBegan detected, X:{}  Y:{}", t->getLocation().x, t->getLocation().y);
-    }
-}
-
-void Level_1_Scene::onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event* event)
-{
-    for (auto&& t : touches)
-    {
-        // AXLOGD("onTouchesMoved detected, X:{}  Y:{}", t->getLocation().x, t->getLocation().y);
-    }
-}
-
-void Level_1_Scene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event* event)
-{
-    for (auto&& t : touches)
-    {
-        // AXLOGD("onTouchesEnded detected, X:{}  Y:{}", t->getLocation().x, t->getLocation().y);
-    }
-}
-
-// void Level_1_Scene::gameOver()
-// {
-//     auto gameOverScene = utils::createInstance<GameOverScene>();
-//     gameOverScene->setBackgroundScreenshot(SpriteManager::getInstance().getScreenshot(this));
-//     _director->replaceScene(gameOverScene);
-// }
-
 void Level_1_Scene::update(float delta)
 {
     switch (_gameState)
     {
-    case GameState::init:
-    {
-        _gameState = GameState::update;
-        break;
+        case GameState::init:
+        {
+            _gameState = GameState::update;
+            break;
+        }
+        case GameState::update:
+        {
+            // Gọi GameManager ở update để chạy update của game manager
+            GameManager::getInstance().update(delta);
+            break;
+        }
     }
-
-    case GameState::update:
-    {
-        // Gọi GameManager ở update để chạy update của game manager
-        GameManager::getInstance().update(delta);
-        /////////////////////////////
-        // Add your codes below...like....
-        //
-        // UpdateJoyStick();
-        // UpdatePlayer();
-        // UpdatePhysics();
-        // ...
-        break;
-    }
-
-    case GameState::pause:
-    {
-        /////////////////////////////
-        // Add your codes below...like....
-        //
-        // anyPauseStuff()
-
-        break;
-    }
-
-    case GameState::menu1:
-    {  /////////////////////////////
-        // Add your codes below...like....
-        //
-        // UpdateMenu1();
-        break;
-    }
-
-    case GameState::menu2:
-    {  /////////////////////////////
-        // Add your codes below...like....
-        //
-        // UpdateMenu2();
-        break;
-    }
-
-    case GameState::end:
-    {  /////////////////////////////
-        // Add your codes below...like....
-        //
-        // CleanUpMyCrap();
-        menuCloseCallback(this);
-        break;
-    }
-
-    }  // switch
-}
-
-
-void Level_1_Scene::menuCloseCallback(ax::Object* sender)
-{
-    // Close the axmol game scene and quit the application
-    _director->end();
-
-    /*To navigate back to native iOS screen(if present) without quitting the application  ,do not use
-     * _director->end() as given above,instead trigger a custom event created in RootViewController.mm
-     * as below*/
-
-    // EventCustom customEndEvent("game_scene_close_event");
-    //_eventDispatcher->dispatchEvent(&customEndEvent);
 }
 
 Level_1_Scene::Level_1_Scene()
 {
-    _sceneID = ++s_sceneID;
-    AXLOGD("Scene: ctor: #{}", _sceneID);
+    AXLOGD("Scene: Level_1 ctor");
 }
 
 Level_1_Scene::~Level_1_Scene()
 {
-    AXLOGD("~Scene: dtor: #{}", _sceneID);
-
-    if (_touchListener)
-        _eventDispatcher->removeEventListener(_touchListener);
-    if (_keyboardListener)
-        _eventDispatcher->removeEventListener(_keyboardListener);
-    if (_mouseListener)
-        _eventDispatcher->removeEventListener(_mouseListener);
-    _sceneID = -1;
+    AXLOGD("~Scene: Level_1 dtor");
 }

@@ -5,8 +5,6 @@ using namespace ax;
 
 bool GameOverScene::init()
 {
-    //////////////////////////////
-    // 1. super init first
     if (!Scene::init())
     {
         return false;
@@ -19,7 +17,7 @@ bool GameOverScene::init()
 
     auto gameOverBoard = UIManager::createGameOverBoard();
     this->addChild(gameOverBoard);
-    // scheduleUpdate() is required to ensure update(float) is called on every loop
+
     scheduleUpdate();
 
     return true;
@@ -45,10 +43,9 @@ void GameOverScene::update(float delta)
 
         case GameState::update:
         {
-           
             break;
         }
-    }  // switch
+    }
 }
 
 GameOverScene::GameOverScene()

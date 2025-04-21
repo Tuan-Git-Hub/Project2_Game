@@ -50,6 +50,8 @@ void HeartLives::addAHeart()
     auto actionHeart =  RepeatForever::create(actionSequence); // lặp lại chuỗi
     heartSprite->runAction(actionHeart);
     heartSprite->setScale(2.0f);
+    // Set camera nếu không khi chương trình đang chạy mà gọi hàm thì chú ý xem node đang dùng camera nào 
+    heartSprite->setCameraMask((int)(CameraFlag::USER1)); 
     this->addChild(heartSprite);
 
     // Tính toán vị trí và cho vào vector để lưu trữ
@@ -64,6 +66,7 @@ void HeartLives::addAHeart()
     vt_hearts.pushBack(heartSprite);
     quantity++;
 }
+
 
 void HeartLives::deleteAHeart()
 {

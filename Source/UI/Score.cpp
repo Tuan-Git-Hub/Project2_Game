@@ -24,7 +24,7 @@ bool Score::init()
         return false;
     }
     // Lấy thông tin điểm số
-    this->score_player = GameManager::getInstance().getPlayerScore();
+    auto score_player = GameManager::getInstance().getPlayerScore();
     // Tạo điểm số
     scoreLabel = Label::createWithTTF("SCORE:" + std::to_string(score_player), "fonts/Matrix_Mono.ttf", 12);
     scoreLabel->setAnchorPoint(Vec2(0, 1)); // để neo ở top left
@@ -32,12 +32,11 @@ bool Score::init()
     this->addChild(scoreLabel);
 
     // Gán callback vẽ từ game manager
-    GameManager::getInstance().drawScore = [this]() { this->addPoints(); };
+    GameManager::getInstance().drawScore = [this](int p) { this->drawPoints(p); };
     return true;
 }
 
-void Score::addPoints()
+void Score::drawPoints(int point)
 {
-    score_player++;
-    scoreLabel->setString("SCORE:" + std::to_string(score_player));
+    scoreLabel->setString("SCORE:" + std::to_string(point));
 }

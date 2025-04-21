@@ -1,7 +1,7 @@
 #include "GameOverBoard.h"
 #include "SpriteManager.h"
 #include "GameManager.h"
-#include "MainMenuScene.h"
+#include "SceneManager.h"
 
 using namespace ax;
 
@@ -66,12 +66,12 @@ bool GameOverBoard::init()
 void GameOverBoard::onRestart()
 {
     AXLOG("Restart Level");
+    SceneManager::restart_currentScene();
 }
 
 // Exit
 void GameOverBoard::onReturnMainMenu()
 {
     AXLOG("Return Main Menu");
-    auto mainMenuScene = utils::createInstance<MainMenuScene>();
-    _director->replaceScene(mainMenuScene);
+    SceneManager::create_and_replace_currentScene(SceneType::MainMenu_Scene);
 }

@@ -12,18 +12,19 @@ private:
 
     int _numberOfHearts = 3;
     int _scorePlayer = 1996;
+    int _pointToAddHeart = 100;
     float _timeLeft = 9.0f;
-    const float time_level_1 = 15.0f;
+    const float time_level_1 = 100.0f;
     const float time_level_2 = 100.0f;
     const float time_level_3 = 100.0f;
     
 public:
     enum class Level
-        {
-            LEVEL_1,
-            LEVEL_2,
-            LEVEL_3
-        };
+    {
+        LEVEL_1,
+        LEVEL_2,
+        LEVEL_3
+    };
 
     static GameManager& getInstance();
 
@@ -35,6 +36,7 @@ public:
     void addAHeart();
     void minusAHeart();
     void addPointPlayer();
+    void spawnFruitsAt(const ax::Vec2& po, int sl);
 
     void resetGameManager();
     void createSceneGameOver();
@@ -43,7 +45,7 @@ public:
     std::function<void()> addAHeartForPlayer;
     std::function<void()> drawAHeart;
     std::function<void()> eraseAHeart;
-    std::function<void()> drawScore;
+    std::function<void(int)> drawScore;
     std::function<void(float)> drawTime;
     
 };

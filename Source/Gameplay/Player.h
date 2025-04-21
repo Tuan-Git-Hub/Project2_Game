@@ -17,14 +17,6 @@ class Player : public ax::Sprite
     };
 
     private:
-        // const char* fileImage_idle_player = "res/Player/Ninja Frog/Idle/Player_1_Idle.plist";
-        // const char* fileImage_run_player = "res/Player/Ninja Frog/Run/Player_1_Run.plist";
-        // const char* fileImage_jump_player = "res/Player/Ninja Frog/Player_1_Jump.png";
-        // const char* fileImage_fall_player = "res/Player/Ninja Frog/Player_1_Fall.png";
-        // const char* fileImage_doublejump_player = "res/Player/Ninja Frog/DoubleJump/Player_1_DoubleJump.plist";
-        // const char* fileImage_walljump_player = "res/Player/Ninja Frog/WallJump/Player_1_WallJump.plist";
-        // const char* fileImage_hit_player = "res/Player/Ninja Frog/Hit/Player_1_Hit.plist";
-
         PlayerState _currentState;
         ax::Action* _idleAction;
         ax::Action* _runAction;
@@ -42,11 +34,14 @@ class Player : public ax::Sprite
         float _speedJump = 300.0f; // Tốc độ nhảy
 
         bool isOnGround = true;
+        bool isOnSand = false;
+        bool isOnMud = false;
+        bool isOnIce = false;
         bool hasDoubleJump = true;
         bool isTouchLeftWall = false;
         bool isTouchRightWall = false;
+        bool isHit = false;
         int _touchpoint = 0; // Số điểm va chạm
-        std::pair<ax::Vec2, ax::Vec2> _contactDataPoint = {ax::Vec2::ZERO, ax::Vec2::ZERO};
     public:
 
         static Player *create();
@@ -54,7 +49,6 @@ class Player : public ax::Sprite
         ~Player();
 
         void setState(PlayerState state);
-        //PlayerState getState() const { return _currentState; };
         void update(float dt);
 
         void idle();
@@ -72,7 +66,10 @@ class Player : public ax::Sprite
         void onRightKeyPressed();
         void onJumpKeyPressed();
         void onKeyReleased();
+        void checkBeforeCollision();
+
         void handleBeginCollisionWith(ax::Node* node, ax::PhysicsContact& contact);
+        void handlePreSolveCollisionWith(ax::Node* node, ax::PhysicsContact& contact, ax::PhysicsContactPreSolve& solve);
         void handleSeparateCollisionWith(ax::Node* node, ax::PhysicsContact& contact);
 
         int getHP_Player() { return _hp; };

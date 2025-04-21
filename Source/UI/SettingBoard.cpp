@@ -3,7 +3,7 @@
 #include "DataSettingMusic.h"
 #include "ui/UISlider.h"
 #include "MobileButtons.h"
-#include "MainMenuScene.h"
+#include "SceneManager.h"
 #define USE_AUDIO_ENGINE 1
 #if USE_AUDIO_ENGINE
 #    include "audio/AudioEngine.h"
@@ -156,9 +156,11 @@ void SettingBoard::toggleSFX()
 void SettingBoard::onSetting()
 {
     AXLOG("Pause Game");
-    _director->pause();
+    _director->pause(); // dừng scene, dừng update(), action
+    this->getScene()->getPhysicsWorld()->setSpeed(0.0f); // dừng vật lý
     auto mobileButtons = this->getParent()->getChildByName("Mobile_Buttons");
     mobileButtons->setPosition(mobileButtons->getPosition() + Vec2(0, -1000));
+    mobileButtons->pause();
     settingBoard->setVisible(true);
     buttonSettingInGame->setVisible(false);
 }
@@ -168,8 +170,10 @@ void SettingBoard::onReturnScene()
 {
     AXLOG("Resume Game");
     _director->resume();
+    this->getScene()->getPhysicsWorld()->setSpeed(1.0f);
     auto mobileButtons = this->getParent()->getChildByName("Mobile_Buttons");
     mobileButtons->setPosition(mobileButtons->getPosition() + Vec2(0, 1000));
+    mobileButtons->resume();
     settingBoard->setVisible(false);
     buttonSettingInGame->setVisible(true);
 
@@ -179,6 +183,8 @@ void SettingBoard::onReturnScene()
 void SettingBoard::onRestart()
 {
     AXLOG("Restart Level");
+    this->onReturnScene();
+    SceneManager::restart_currentScene();
 }
 
 // Exit
@@ -186,6 +192,5 @@ void SettingBoard::onReturnMainMenu()
 {
     AXLOG("Return Main Menu");
     this->onReturnScene();
-    auto mainMenuScene = utils::createInstance<MainMenuScene>();
-    _director->replaceScene(mainMenuScene);
+    SceneManager::create_and_replace_currentScene(SceneType::MainMenu_Scene);
 }

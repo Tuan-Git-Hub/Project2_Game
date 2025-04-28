@@ -9,6 +9,7 @@ private:
     ax::Sprite* bg1;
     ax::Sprite* bg2;
     ax::Sprite* bg3;
+    ax::Sprite* bg4;
     float speed = 100.0f;
 public:
     static BackgroundMainMenu* createBg();

@@ -32,6 +32,9 @@ class Player : public ax::Sprite
         ax::Vec2 _velocity = {0, 0}; // vận tốc
         float _speedRun = 150.0f; // Tốc chạy cơ bản
         float _speedJump = 300.0f; // Tốc độ nhảy
+        float _speedSlideWall = 50.0f; // Tốc độ trượt tường
+        ax::Node* _nodeObject = nullptr; // Một con trỏ node để dùng trường hợp cần thiết
+        ax::Vec2 po_Object; // vị trí node
 
         bool isOnGround = true;
         bool isOnSand = false;
@@ -41,6 +44,10 @@ class Player : public ax::Sprite
         bool isTouchLeftWall = false;
         bool isTouchRightWall = false;
         bool isHit = false;
+        bool isPush = false;
+        bool isFollowObject = false;
+        bool isInWindZone = false;
+        //float radWindZone;
         int _touchpoint = 0; // Số điểm va chạm
     public:
 
@@ -72,7 +79,6 @@ class Player : public ax::Sprite
         void handlePreSolveCollisionWith(ax::Node* node, ax::PhysicsContact& contact, ax::PhysicsContactPreSolve& solve);
         void handleSeparateCollisionWith(ax::Node* node, ax::PhysicsContact& contact);
 
-        int getHP_Player() { return _hp; };
         void delete_A_HP();
 
 };

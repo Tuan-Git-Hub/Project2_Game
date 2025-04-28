@@ -2,6 +2,7 @@
 #include "SpriteManager.h"
 #include "GameManager.h"
 #include "SceneManager.h"
+#include "SoundManager.h"
 
 using namespace ax;
 
@@ -66,6 +67,7 @@ bool GameOverBoard::init()
 void GameOverBoard::onRestart()
 {
     AXLOG("Restart Level");
+    SoundManager::playEffect(AudioPaths::CLICK);
     SceneManager::restart_currentScene();
 }
 
@@ -73,5 +75,6 @@ void GameOverBoard::onRestart()
 void GameOverBoard::onReturnMainMenu()
 {
     AXLOG("Return Main Menu");
+    SoundManager::playEffect(AudioPaths::CLICK);
     SceneManager::create_and_replace_currentScene(SceneType::MainMenu_Scene);
 }

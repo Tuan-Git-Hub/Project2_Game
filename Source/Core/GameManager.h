@@ -17,13 +17,15 @@ private:
     const float time_level_1 = 100.0f;
     const float time_level_2 = 100.0f;
     const float time_level_3 = 100.0f;
+    const float time_level_4 = 150.0f;
     
 public:
     enum class Level
     {
         LEVEL_1,
         LEVEL_2,
-        LEVEL_3
+        LEVEL_3,
+        LEVEL_4
     };
 
     static GameManager& getInstance();
@@ -47,6 +49,7 @@ public:
     std::function<void()> eraseAHeart;
     std::function<void(int)> drawScore;
     std::function<void(float)> drawTime;
+    std::function<void()> shakeCamera;
     
 };
 

@@ -1,5 +1,6 @@
 #include "GameOverScene.h"
 #include "UIManager.h"
+#include "SoundManager.h"
 
 using namespace ax;
 
@@ -9,6 +10,10 @@ bool GameOverScene::init()
     {
         return false;
     }
+
+    // Tạo âm thanh
+    SoundManager::stopBackground();
+    SoundManager::playEffect(AudioPaths::GAMEOVER_SFX);
 
     auto visibleSize = _director->getVisibleSize();
     auto origin      = _director->getVisibleOrigin();

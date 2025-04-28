@@ -10,7 +10,8 @@ enum class SceneType
     GameOver_Scene,
     Level_1_Scene,
     Level_2_Scene,
-    Level_3_Scene
+    Level_3_Scene,
+    Level_4_Scene
 };
 
 class SceneManager

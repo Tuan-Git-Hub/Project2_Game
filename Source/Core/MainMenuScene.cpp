@@ -3,6 +3,7 @@
 #include "UIManager.h"
 #include "GameObjectManager.h"
 #include "GameManager.h"
+#include "SoundManager.h"
 
 
 using namespace ax;
@@ -21,6 +22,8 @@ bool MainMenuScene::init()
 
     // Tạo hoặc reset game manager để tạo logic game
     GameManager::getInstance().resetGameManager();
+    // Tạo âm thanh
+    SoundManager::playBackground(AudioPaths::MAINMENU_BACKGROUND, true);
     
     // Load texture và sprite frame 1 lượt
     UIManager::loadTextures_SpriteFrames();

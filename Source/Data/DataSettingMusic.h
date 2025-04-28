@@ -12,7 +12,7 @@ private:
 
     bool _isMuteMusic = false;
     bool _isMuteSFX = false;
-    int _percentVolume = 30;
+    int _percentVolume = 96;
     
 public:
     static DataSettingMusic& getInstance();
@@ -20,6 +20,7 @@ public:
     bool isMuteMusic() const { return _isMuteMusic; };
     bool isMuteSFX() const { return _isMuteSFX; };
     int getPercentVolume() const { return _percentVolume; };
+    float getDecimalVolume() { return _percentVolume/100.0f; };
 
     void toggleMusic()  { _isMuteMusic = !_isMuteMusic; };;
     void toggleSFX() { _isMuteSFX = !_isMuteSFX; };

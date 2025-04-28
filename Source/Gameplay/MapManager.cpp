@@ -120,7 +120,7 @@ void MapManager::addPhysicBodyToTileMap(TMXTiledMap* map)
                     auto posY = std::min(tilePo1.y, tilePo2.y) + heightBody / 2;
                     node->setPosition(Vec2(posX, posY));
                     node->setPhysicsBody(bodyGround);
-                    map->addChild(node);
+                    map->addChild(node, 10);
                 }
             }
         }
@@ -151,7 +151,7 @@ void MapManager::createObjectsFromTMXTileMap(TMXTiledMap* map)
                 // Vị trí đặt object cho phù hợp với góc xoay
                 float delta_x = (width / 2) * cos(AX_DEGREES_TO_RADIANS(-rotation)) - (height / 2) * sin(AX_DEGREES_TO_RADIANS(-rotation));
                 float delta_y = (width / 2) * sin(AX_DEGREES_TO_RADIANS(-rotation)) + (height / 2) * cos(AX_DEGREES_TO_RADIANS(-rotation));
-                if (name == "Trampoline")
+                if (name == "Trampoline" || name == "Fire" || name == "Fan")
                 {
                     delta_x = (width / 2) * cos(AX_DEGREES_TO_RADIANS(-rotation));
                     delta_y = (width / 2) * sin(AX_DEGREES_TO_RADIANS(-rotation));
@@ -171,12 +171,21 @@ void MapManager::createObjectsFromTMXTileMap(TMXTiledMap* map)
                     item_Type = ItemType::Box3;
                 else if (name == "Fruit")
                     item_Type = ItemType::Fruits;
+                else if (name == "CheckpointFlag")
+                    item_Type = ItemType::CheckpointFlag;
                 else if (name == "Spike")
                     trap_Type = TrapType::Spike;
                 else if (name == "Trampoline")
                     trap_Type = TrapType::Trampoline;
-                else if (name == "Saw")
+                else if (name.find("Saw") == 0)
                     trap_Type = TrapType::Saw;
+                else if (name == "Fire")
+                    trap_Type = TrapType::Fire;
+                else if (name.find("RockHead") == 0)
+                    trap_Type = TrapType::RockHead;
+                else if (name == "Fan")
+                    trap_Type = TrapType::Fan;
+                 
 
                 if (item_Type != ItemType::None)
                 {
@@ -190,6 +199,7 @@ void MapManager::createObjectsFromTMXTileMap(TMXTiledMap* map)
                     auto newTrap = GameObjectManager::createTrap(trap_Type);
                     newTrap->setPosition(po_x, po_y);
                     newTrap->setRotation(rotation);
+                    newTrap->setName(name);
                     map->addChild(newTrap);
                 }
                 else

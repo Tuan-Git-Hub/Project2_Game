@@ -93,30 +93,56 @@ bool TestTrapScene3::init()
     // this->addChild(sawTrap);
 
     // Trampoline
-    auto trampolineTrap1 = GameObjectManager::createTrap(TrapType::Trampoline);
-    trampolineTrap1->setPosition(Vec2(visibleSize.width * 2/4 , trampolineTrap1->getContentSize().height/2));
-    this->addChild(trampolineTrap1);
+    // auto trampolineTrap1 = GameObjectManager::createTrap(TrapType::Trampoline);
+    // trampolineTrap1->setPosition(Vec2(visibleSize.width * 2/4 , 0));
+    // this->addChild(trampolineTrap1);
     // auto trampolineTrap2 = GameObjectManager::createTrap(TrapType::Trampoline);
     // trampolineTrap2->setRotation(-90.0f);
     // trampolineTrap2->setPosition(Vec2(visibleSize.width, 20));
     // this->addChild(trampolineTrap2);
 
+    // Fire trap
+    // auto fireTrap1 = GameObjectManager::createTrap(TrapType::Fire);
+    // fireTrap1->setPosition(Vec2(visibleSize.width * 3/4 , 0));
+    // this->addChild(fireTrap1);
+    // auto fireTrap2 = GameObjectManager::createTrap(TrapType::Fire);
+    // fireTrap2->setPosition(Vec2(visibleSize.width, 50));
+    // fireTrap2->setRotation(-90);
+    // this->addChild(fireTrap2);
+
+    // Rock Head
+    auto rockHead = static_cast<RockHead*>(GameObjectManager::createTrap(TrapType::RockHead));
+    rockHead->setPosition(Vec2(visibleSize.width * 3/4 , rockHead->getContentSize().height/2));
+    rockHead->setAmplitude(200.0f);
+    rockHead->setFrequency(0.1f);
+    rockHead->activateTrap("horizontal");
+    this->addChild(rockHead);
+
+    // Fan
+    // auto fan = GameObjectManager::createTrap(TrapType::Fan);
+    // fan->setPosition(Vec2(visibleSize.width * 3/4 , 0));
+    // this->addChild(fan);
+    // auto fan2 = GameObjectManager::createTrap(TrapType::Fan);
+    // fan2->setPosition(Vec2(visibleSize.width, 15));
+    // fan2->setRotation(-90);
+    // this->addChild(fan2);
+
     // Box
-    auto box1 = GameObjectManager::createItem(ItemType::Box1);
-    box1->setPosition(Vec2(visibleSize.width * 1/6 , visibleSize.height * 1/5));
-    this->addChild(box1);
+    // auto box1 = GameObjectManager::createItem(ItemType::Box1);
+    // box1->setPosition(Vec2(visibleSize.width * 1/6 , visibleSize.height * 1/5));
+    // this->addChild(box1);
 
-    auto box1_1 = GameObjectManager::createItem(ItemType::Box1);
-    box1_1->setPosition(Vec2(visibleSize.width * 2/4 + 40, visibleSize.height * 1/5));
-    this->addChild(box1_1);
+    // auto box1_1 = GameObjectManager::createItem(ItemType::Box1);
+    // box1_1->setPosition(Vec2(visibleSize.width * 2/4 + 40, visibleSize.height * 1/5));
+    // this->addChild(box1_1);
 
-    auto box2 = GameObjectManager::createItem(ItemType::Box2);
-    box2->setPosition(Vec2(visibleSize.width * 2/4 + 80, visibleSize.height * 1/5));
-    this->addChild(box2);
+    // auto box2 = GameObjectManager::createItem(ItemType::Box2);
+    // box2->setPosition(Vec2(visibleSize.width * 2/4 + 80, visibleSize.height * 1/5));
+    // this->addChild(box2);
 
-    auto box3 = GameObjectManager::createItem(ItemType::Box3);
-    box3->setPosition(Vec2(visibleSize.width * 2/4 + 120, visibleSize.height * 1/5));
-    this->addChild(box3);
+    // auto box3 = GameObjectManager::createItem(ItemType::Box3);
+    // box3->setPosition(Vec2(visibleSize.width * 2/4 + 120, visibleSize.height * 1/5));
+    // this->addChild(box3);
 
     // Fruits
     auto fruit = GameObjectManager::createItem(ItemType::Fruits);

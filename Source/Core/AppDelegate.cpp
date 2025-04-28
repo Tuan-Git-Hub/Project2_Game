@@ -62,15 +62,15 @@ bool AppDelegate::applicationDidFinishLaunching()
 #if (AX_TARGET_PLATFORM == AX_PLATFORM_WIN32) || (AX_TARGET_PLATFORM == AX_PLATFORM_MAC) || \
     (AX_TARGET_PLATFORM == AX_PLATFORM_LINUX)
         glView = GLViewImpl::createWithRect(
-            "Project2_Game", ax::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+            "Project2_Frogventure", ax::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
 #else
-        glView = GLViewImpl::create("Project2_Game");
+        glView = GLViewImpl::create("Project2_Frogventure");
 #endif
         director->setGLView(glView);
     }
 
     // turn on display FPS
-    director->setStatsDisplay(true);
+    director->setStatsDisplay(false);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 60);

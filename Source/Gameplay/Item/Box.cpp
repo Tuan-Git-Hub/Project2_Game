@@ -2,6 +2,7 @@
 #include "SpriteManager.h"
 #include "GameObjectManager.h"
 #include "GameManager.h"
+#include "SoundManager.h"
 
 using namespace ax;
 
@@ -81,7 +82,7 @@ void Box::breakBox()
 {   
     this->setOpacity(0); // ẩn đi
     this->getPhysicsBody()->setEnabled(false); // Tắt physicbody node chính
-    
+    SoundManager::playEffect(AudioPaths::BROKEN_BOX);
     fragmentNode->setVisible(true);
     for (auto& child : fragmentNode->getChildren())
     {
@@ -110,6 +111,7 @@ void Box::updateItem()
         return;
     if (1 < getCurrentHPItem())
     {
+        SoundManager::playEffect(AudioPaths::HIT_BOX);
         minusCurrentHPItem(1);
         this->hit();
     }

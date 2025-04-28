@@ -14,7 +14,7 @@ public:
 private:
     ax::Camera* camera;
     ax::Node* target;
-
+    bool isShaking = false;
 };
 
 

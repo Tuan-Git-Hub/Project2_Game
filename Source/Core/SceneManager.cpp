@@ -4,6 +4,9 @@
 #include "MainMenuScene.h"
 #include "GameOverScene.h"
 #include "Level_1_Scene.h"
+#include "Level_2_Scene.h"
+#include "Level_3_Scene.h"
+#include "Level_4_Scene.h"
 #include "TestTrapScene3.h"
 
 using namespace ax;
@@ -20,8 +23,12 @@ Scene* SceneManager::createScene(SceneType type)
             return utils::createInstance<GameOverScene>();
         case SceneType::Level_1_Scene:
             return utils::createInstance<Level_1_Scene>();
+        case SceneType::Level_2_Scene:
+            return utils::createInstance<Level_2_Scene>();
         case SceneType::Level_3_Scene:
-            return utils::createInstance<TestTrapScene3>();
+            return utils::createInstance<Level_3_Scene>();
+        case SceneType::Level_4_Scene:
+            return utils::createInstance<Level_4_Scene>();
         default:
             AXLOG("Error! SceneType in SceneManager is none");
             return nullptr;

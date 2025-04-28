@@ -24,6 +24,7 @@ public:
             // Back ground Main Menu
             {"backgroundMainMenu", "res/BackgroundMainMenu/background.png"},
             {"frog_backgroundMainMenu", "res/BackgroundMainMenu/frog_background.png"},
+            {"nameGame", "res/BackgroundMainMenu/NameGame.png"},
             // Back ground InGame
             {"backgroundBrown", "res/BackgroundInGame/backgroundBrown.png"},
             {"backgroundGray", "res/BackgroundInGame/backgroundGray.png"},
@@ -45,6 +46,7 @@ public:
             {"level01", "res/LevelsBoard/01.png"},
             {"level02", "res/LevelsBoard/02.png"},
             {"level03", "res/LevelsBoard/03.png"},
+            {"level04", "res/LevelsBoard/04.png"},
             // Mobile buttons
             {"leftButton", "res/Mobile Buttons/Mobile Buttons/3.png"},
             {"rightButton", "res/Mobile Buttons/Mobile Buttons/4.png"},

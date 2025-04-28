@@ -3,10 +3,7 @@
 #include "MainMenuBoard.h"
 #include "DataSettingMusic.h"
 #include "ui/UISlider.h"
-#define USE_AUDIO_ENGINE 1
-#if USE_AUDIO_ENGINE
-#    include "audio/AudioEngine.h"
-#endif
+#include "SoundManager.h"
 
 using namespace ax;
 
@@ -34,7 +31,7 @@ bool OptionsBoard::init()
     this->addChild(optionsboard);
 
     // Tạo các nút bật tắt
-    isMuteMusic = DataSettingMusic::getInstance().isMuteMusic();
+    isMuteMusic = SoundManager::getdataMusic()->isMuteMusic();
     if (isMuteMusic)
         musicONOFF = SpriteManager::getInstance().createSprite("buttonOff");
     else
@@ -42,7 +39,7 @@ bool OptionsBoard::init()
     auto button_toggleMusic = MenuItemSprite::create(musicONOFF, musicONOFF, AX_CALLBACK_0(OptionsBoard::toggleMusic, this));
     button_toggleMusic->setScale(0.9f);
 
-    isMuteSFX = DataSettingMusic::getInstance().isMuteSFX();
+    isMuteSFX = SoundManager::getdataMusic()->isMuteSFX();
     if (isMuteSFX)
         sfxONOFF = SpriteManager::getInstance().createSprite("buttonOff");
     else
@@ -69,7 +66,7 @@ bool OptionsBoard::init()
 
     slider->setScale(1.5f);
     slider->setPosition(Vec2(96, 28));
-    slider->setPercent(DataSettingMusic::getInstance().getPercentVolume());
+    slider->setPercent(SoundManager::getdataMusic()->getPercentVolume());
 
     // Xử lý sự kiện khi người chơi kéo slider
     slider->addEventListener([&](Object* sender, ui::Slider::EventType type) 
@@ -78,9 +75,8 @@ bool OptionsBoard::init()
         {
             auto s = dynamic_cast<ui::Slider*>(sender);
             float v = s->getPercent() / 100.0f;  // Chuyển giá trị 0-100 thành 0.0-1.0
-            //AudioEngine::setVolume(name, v);  // Đặt âm lượng (name là ID, tên đặt âm thanh)
+            SoundManager::setVolume(v);
             AXLOG("music percent: %d", s->getPercent());
-            DataSettingMusic::getInstance().setPercentVolume(s->getPercent());
         }
     });
     optionsboard->addChild(slider);
@@ -90,42 +86,43 @@ bool OptionsBoard::init()
 
 void OptionsBoard::toggleMusic()
 {
+    SoundManager::playEffect(AudioPaths::CLICK);
     isMuteMusic = !isMuteMusic;
-    DataSettingMusic::getInstance().toggleMusic();
+    SoundManager::getdataMusic()->toggleMusic();
     if(isMuteMusic)
     {
         AXLOG("Music Off");
         musicONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOff"));
-        AudioEngine::pauseAll();
+        SoundManager::pause_Music();
     }
     else
     {
         AXLOG("Music On");
         musicONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOn"));
-        AudioEngine::resumeAll();
+        SoundManager::resume_Music();
     }
 }
 
 void OptionsBoard::toggleSFX()
 {
+    SoundManager::playEffect(AudioPaths::CLICK);
     isMuteSFX = !isMuteSFX;
-    DataSettingMusic::getInstance().toggleSFX();
+    SoundManager::getdataMusic()->toggleSFX();
     if(isMuteSFX)
     {
         AXLOG("SFX Off");
         sfxONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOff"));
-        AudioEngine::pauseAll();
     }
     else
     {
         AXLOG("SFX On");
         sfxONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOn"));
-        AudioEngine::resumeAll();
     }
 }
 
 void OptionsBoard::onReturn()
 {
+    SoundManager::playEffect(AudioPaths::CLICK);
     AXLOG("Return MainMenu Board");
     this->setPosition(Vec2(1000, 1000));
     MainMenuBoard* mainMenuBoard = dynamic_cast<MainMenuBoard*>(this->getParent());

@@ -32,19 +32,19 @@ bool MobileButtons::init()
 
     // Tạo nút di chuyển sang trái
     auto leftMoveButton = SpriteManager::getInstance().createSprite("leftButton");
-    leftMoveButton->setPosition(100, 60);
+    leftMoveButton->setPosition(60, 60);
     leftMoveButton->setScale(2.0f); 
     this->addChild(leftMoveButton);
 
     // Tạo nút di chuyển sang phải
     auto rightMoveButton = SpriteManager::getInstance().createSprite("rightButton");
-    rightMoveButton->setPosition(180, 60);
+    rightMoveButton->setPosition(140, 60);
     rightMoveButton->setScale(2.0f);
     this->addChild(rightMoveButton);
 
     // Tạo nút di chuyển nhảy
     auto jumpMoveButton = SpriteManager::getInstance().createSprite("jumpButton");
-    jumpMoveButton->setPosition(500, 60);
+    jumpMoveButton->setPosition(540, 60);
     jumpMoveButton->setScale(2.0f);
     this->addChild(jumpMoveButton);
 
@@ -117,7 +117,6 @@ bool MobileButtons::init()
             {
                 jumpMoveButton->setColor(Color3B(150, 150, 150)); // Làm tối hơn;
                 AXLOG("Main character jumped!");
-                isHoldingJump = true;
                 jumpMove();
                 return true;
             }
@@ -127,12 +126,11 @@ bool MobileButtons::init()
 
     jumpMoveListener->onTouchEnded = [this, jumpMoveButton](Touch* touch, Event* event){
         jumpMoveButton->setColor(Color3B::WHITE); // Trả lại màu như cũ
-        isHoldingJump = false;
     };
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(jumpMoveListener ,this);
 
-    // Tạo sự kiện nhấn nút ( sau xóa bỏ )
+    // Tạo sự kiện nhấn nút
     auto keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode code, Event* event) {
         if (code == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)

@@ -1,6 +1,7 @@
 #include "Trampoline.h"
 #include "GameObjectManager.h"
 #include "SpriteManager.h"
+#include "SoundManager.h"
 
 USING_NS_AX;
 
@@ -61,6 +62,7 @@ void Trampoline::activateTrap()
     isActive = true;
     AXLOG("Bãy (Trampoline) đã kích hoạt!");
 
+    SoundManager::playEffect(AudioPaths::TRAMPOLINE);
     // Chạy Animation
     this->runAction(actTrap);
 

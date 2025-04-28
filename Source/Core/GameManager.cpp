@@ -20,6 +20,8 @@ void GameManager::selectLevel(GameManager::Level level)
         _timeLeft = time_level_2;
     else if (level == Level::LEVEL_3)
         _timeLeft = time_level_3;
+    else if (level == Level::LEVEL_4)
+        _timeLeft = time_level_4;
 }
 
 // Thêm trái tim và gọi hàm vẽ
@@ -35,6 +37,7 @@ void GameManager::minusAHeart()
 {
     _numberOfHearts--;
     eraseAHeart();
+    shakeCamera();
 }
 
 // Thêm điểm và gọi hàm vẽ

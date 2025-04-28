@@ -9,7 +9,8 @@ enum class ItemType
     Box1,
     Box2,
     Box3,
-    Fruits
+    Fruits,
+    CheckpointFlag,
 };
 
 class Item : public ax::Sprite

@@ -12,6 +12,7 @@ public:
     void selectLevel_1();
     void selectLevel_2();
     void selectLevel_3();
+    void selectLevel_4();
     void onReturn();
 
 };

@@ -34,7 +34,11 @@ bool CollisionManager::onContactBegin(PhysicsContact& contact)
         auto otherNode = (playerNode == bodyA->getNode()) ? (bodyB->getNode()) : (bodyA->getNode());   
         if (otherNode->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::Trampoline)
         {
-            static_cast<Trampoline*>(otherNode)->activateTrap();
+            static_cast<Trap*>(otherNode)->activateTrap();
+        }
+        else if (otherNode->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::Fan)
+        {
+            static_cast<Trap*>(otherNode)->activateTrap();
         }
         else if (otherNode->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::Fruits)
         {
@@ -43,6 +47,10 @@ bool CollisionManager::onContactBegin(PhysicsContact& contact)
         else if (otherNode->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::Trigger)
         {
             MapManager::triggerHiddenMap(otherNode);
+        }
+        else if (otherNode->getPhysicsBody()->getCategoryBitmask() == ObjectBitmask::ChechpointFlag)
+        {
+            static_cast<Item*>(otherNode)->updateItem();
         }
         static_cast<Player*>(playerNode)->handleBeginCollisionWith(otherNode, contact);
     }

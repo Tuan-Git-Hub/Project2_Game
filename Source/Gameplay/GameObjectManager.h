@@ -10,19 +10,24 @@
 // Tạo 1 danh sách các bitmask sẽ gán. dùng uint8_t (unsigned integer) để tiết kiệm bộ nhớ 
 struct ObjectBitmask
 {
-    static const uint16_t None = 0x000;
-    static const uint16_t Ground = 0x001;
-    static const uint16_t Player = 0x002;
-    static const uint16_t SpikeTrap = 0x004;
-    static const uint16_t SawTrap = 0x008;
-    static const uint16_t Trampoline = 0x010;
-    static const uint16_t Sand = 0x020;
-    static const uint16_t Mud = 0x040;
-    static const uint16_t Ice = 0x080;
-    static const uint16_t Box = 0x100;
-    static const uint16_t Box_Fragment = 0x200;
-    static const uint16_t Fruits = 0x400;
-    static const uint16_t Trigger = 0x800;
+    static const uint32_t None = 0x000;
+    static const uint32_t Ground = 0x001;
+    static const uint32_t Player = 0x002;
+    static const uint32_t SpikeTrap = 0x004;
+    static const uint32_t SawTrap = 0x008;
+    static const uint32_t Trampoline = 0x010;
+    static const uint32_t Sand = 0x020;
+    static const uint32_t Mud = 0x040;
+    static const uint32_t Ice = 0x080;
+    static const uint32_t Box = 0x100;
+    static const uint32_t Box_Fragment = 0x200;
+    static const uint32_t Fruits = 0x400;
+    static const uint32_t Trigger = 0x800;
+    static const uint32_t ChechpointFlag = 0x1000;
+    static const uint32_t FireTrap = 0x2000;
+    static const uint32_t RockHead = 0x4000;
+    static const uint32_t Fan = 0x8000;
+    static const uint32_t WinZone = 0x10000;
 };
 
 class GameObjectManager
@@ -42,10 +47,20 @@ public:
             { "sawTrap", "res/Traps/Saw/Saw_Off.png" },
             // Trampoline
             { "trampolineTrap", "res/Traps/Trampoline/Trampoline_Idle.png" },
+            // Fire
+            { "fireTrap", "res/Traps/Fire/Fire_Off.png" },
+            // Rock Head
+            { "rockHead", "res/Traps/Rock Head/RockHead_Idle.png" },
+            // Fan
+            { "fan", "res/Traps/Fan/Fan_Off.png" },
+            // Dust Particle
+            { "dustParticle", "res/Traps/Fan/Dust Particle.png" },
             // Box
             { "Box1_Idle", "res/Items/Boxes/Box1/Box1_Idle.png" },
             { "Box2_Idle", "res/Items/Boxes/Box2/Box2_Idle.png" },
             { "Box3_Idle", "res/Items/Boxes/Box3/Box3_Idle.png" },
+            // Checkpoint
+            { "Checkpoint_NoFlag", "res/Items/Checkpoints/Checkpoint/Checkpoint(NoFlag).png" },
         });
 
         // Load plist vào SpriteFramesCache  
@@ -60,6 +75,16 @@ public:
             "res/Traps/Saw/Saw_On.plist",
             // Trampoline
             "res/Traps/Trampoline/Trampoline_Jump.plist",
+            // Fire
+            "res/Traps/Fire/Fire_On.plist",
+            // Rock Head
+            "res/Traps/Rock Head/RockHead_Blink.plist",
+            "res/Traps/Rock Head/RockHead_BottomHit.plist",
+            "res/Traps/Rock Head/RockHead_TopHit.plist",
+            "res/Traps/Rock Head/RockHead_LeftHit.plist",
+            "res/Traps/Rock Head/RockHead_RightHit.plist",
+            // Fan
+            "res/Traps/Fan/Fan_On.plist",
             // Box
             "res/Items/Boxes/Box1/Box1_Hit.plist",
             "res/Items/Boxes/Box1/Box1_Break.plist",
@@ -77,6 +102,9 @@ public:
             "res/Items/Fruits/Orange/Orange.plist",
             "res/Items/Fruits/Pineapple/Pineapple.plist",
             "res/Items/Fruits/Strawberry/Strawberry.plist",
+            // Checkpoint
+            "res/Items/Checkpoints/Checkpoint/Checkpoint_FlagOut.plist",
+            "res/Items/Checkpoints/Checkpoint/Checkpoint_FlagIdle.plist",
         });
     }
 

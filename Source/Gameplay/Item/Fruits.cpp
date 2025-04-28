@@ -2,6 +2,7 @@
 #include "SpriteManager.h"
 #include "GameObjectManager.h"
 #include "GameManager.h"
+#include "SoundManager.h"
 
 using namespace ax;
 
@@ -45,7 +46,7 @@ bool Fruits::init()
     auto itemBody = PhysicsBody::createBox(Vec2(13, 13), PhysicsMaterial(0.1f, 0.0f, 0.15f));
     itemBody->setDynamic(false);
     itemBody->setCategoryBitmask(ObjectBitmask::Fruits);
-    itemBody->setCollisionBitmask(ObjectBitmask::Ground|ObjectBitmask::Sand|ObjectBitmask::Mud|ObjectBitmask::Ice);
+    itemBody->setCollisionBitmask(ObjectBitmask::Ground|ObjectBitmask::Sand|ObjectBitmask::Mud|ObjectBitmask::Ice|ObjectBitmask::FireTrap);
     itemBody->setContactTestBitmask(ObjectBitmask::Player);
     itemBody->setRotationEnable(false); // Không cho phép vật thể xoay
 
@@ -61,6 +62,7 @@ void Fruits::collected()
     this->stopAllActions();
     this->runAction(_collectedAction);
     auto addPoint = CallFunc::create([=] {
+        SoundManager::playEffect(AudioPaths::ADD_POINT);
         GameManager::getInstance().addPointPlayer();
     });
     auto removeFruit = CallFunc::create([=] {

@@ -16,7 +16,6 @@ public:
     
     bool isHoldingMoveLeft = false;
     bool isHoldingMoveRight = false;
-    bool isHoldingJump = false;
 
     void update(float dt);
 };

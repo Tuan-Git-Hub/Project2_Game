@@ -6,11 +6,10 @@
 #include "Spike.h"
 #include "Saw.h"
 #include "Trampoline.h"
-// #include "Saw.h"
-// #include "SandMudIce.h"
-// #include "Fire.h"
-// #include "Fan.h"
-// #include "RockHead.h"
+#include "Fire.h"
+#include "RockHead.h"
+#include "Fan.h"
+
 
 class TrapFactory
 {
@@ -42,13 +41,17 @@ public:
                 delete certainTrap;
                 return nullptr;
             }
-            // case TrapType::Fire:
-            // {
-            //     Fire* certainTrap = new Fire();
-            //     certainTrap->init(spriteFile);
-            //     return certainTrap;
-            //     break;
-            // }
+            case TrapType::Fire:
+            {
+                Fire* certainTrap = new Fire();
+                if (certainTrap && certainTrap->init())
+                {
+                    certainTrap->autorelease();
+                    return certainTrap;
+                }
+                delete certainTrap;
+                return nullptr;
+            }
             case TrapType::Saw:
             {
                 Saw* certainTrap = new Saw();
@@ -60,31 +63,35 @@ public:
                 delete certainTrap;
                 return nullptr;
             }
-            // case TrapType::Fan:
-            // {
-            //     Fan* certainTrap = new Fan();
-            //     certainTrap->init(spriteFile);
-            //     return certainTrap;
-            //     break;
-            // }
-            // case TrapType::RockHead:
-            // {
-            //     RockHead* certainTrap = new RockHead();
-            //     certainTrap->init(spriteFile);
-            //     return certainTrap;
-            //     break;
-            // }
+            case TrapType::Fan:
+            {
+                Fan* certainTrap = new Fan();
+                if (certainTrap && certainTrap->init())
+                {
+                    certainTrap->autorelease();
+                    return certainTrap;
+                }
+                delete certainTrap;
+                return nullptr;
+            }
+            case TrapType::RockHead:
+            {
+                RockHead* certainTrap = new RockHead();
+                if (certainTrap && certainTrap->init())
+                {
+                    certainTrap->autorelease();
+                    return certainTrap;
+                }
+                delete certainTrap;
+                return nullptr;
+            }
             default:
             {
                 AXLOG("Không tạo được bẫy, trả về null pointer");
                 return nullptr;
             }
         }
-    };
-
-
-    
-    // static Trap* createTrap(TrapType _trapType, SMIType _smiType);
+    }
 };
 
 #endif // __TRAP_FACTORY_H__

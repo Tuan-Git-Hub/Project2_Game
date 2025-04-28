@@ -5,6 +5,7 @@
 #include "Box2.h"
 #include "Box3.h"
 #include "Fruits.h"
+#include "CheckpointFlag.h"
 
 class ItemFactory
 {
@@ -21,6 +22,8 @@ public:
                 return Box3::createBox3();
             case ItemType::Fruits:
                 return Fruits::createFruit();
+            case ItemType::CheckpointFlag:
+                return CheckpointFlag::createCheckpoint();
             default:
                 return nullptr;
         }

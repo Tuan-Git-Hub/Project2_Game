@@ -24,6 +24,7 @@ bool BackgroundMainMenu::init()
     bg1 = SpriteManager::getInstance().createSprite("backgroundMainMenu");
     bg2 = SpriteManager::getInstance().createSprite("backgroundMainMenu");
     bg3 = SpriteManager::getInstance().createSprite("frog_backgroundMainMenu");
+    bg4 = SpriteManager::getInstance().createSprite("nameGame");
 
     bg1->setAnchorPoint(Vec2(0, 0));
     bg1->setPosition(0, 0);
@@ -35,9 +36,15 @@ bool BackgroundMainMenu::init()
     bg3->setPosition(Vec2(40, 0));
     bg3->setScale(1.8f);
 
+    bg4->setAnchorPoint(Vec2(0, 0));
+    bg4->setPosition(Vec2(30, 240));
+    bg4->setScale(1.1f);
+
+
     this->addChild(bg1);
     this->addChild(bg2);
     this->addChild(bg3);
+    this->addChild(bg4);
 
     this->scheduleUpdate();
 

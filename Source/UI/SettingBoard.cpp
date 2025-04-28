@@ -4,10 +4,7 @@
 #include "ui/UISlider.h"
 #include "MobileButtons.h"
 #include "SceneManager.h"
-#define USE_AUDIO_ENGINE 1
-#if USE_AUDIO_ENGINE
-#    include "audio/AudioEngine.h"
-#endif
+#include "SoundManager.h"
 
 using namespace ax;
 
@@ -48,7 +45,7 @@ bool SettingBoard::init()
     this->addChild(settingBoard);
 
     // Tạo các nút bật tắt music, nút return, nút restart, nút exit
-    isMuteMusic = DataSettingMusic::getInstance().isMuteMusic();
+    isMuteMusic = SoundManager::getdataMusic()->isMuteMusic();
     if (isMuteMusic)
         musicONOFF = SpriteManager::getInstance().createSprite("buttonOff");
     else
@@ -56,7 +53,7 @@ bool SettingBoard::init()
     auto button_toggleMusic = MenuItemSprite::create(musicONOFF, musicONOFF, AX_CALLBACK_0(SettingBoard::toggleMusic, this));
     button_toggleMusic->setScale(0.9f);
 
-    isMuteSFX = DataSettingMusic::getInstance().isMuteSFX();
+    isMuteSFX = SoundManager::getdataMusic()->isMuteSFX();
     if (isMuteSFX)
         sfxONOFF = SpriteManager::getInstance().createSprite("buttonOff");
     else
@@ -95,7 +92,7 @@ bool SettingBoard::init()
 
     slider->setScale(1.5f);
     slider->setPosition(Vec2(96, 60));
-    slider->setPercent(DataSettingMusic::getInstance().getPercentVolume());
+    slider->setPercent(SoundManager::getdataMusic()->getPercentVolume());
 
     // Xử lý sự kiện khi người chơi kéo slider
     slider->addEventListener([&](Object* sender, ui::Slider::EventType type) 
@@ -104,9 +101,8 @@ bool SettingBoard::init()
         {
             auto s = dynamic_cast<ui::Slider*>(sender);
             float v = s->getPercent() / 100.0f;  // Chuyển giá trị 0-100 thành 0.0-1.0
-            //AudioEngine::setVolume(name, v);  // Đặt âm lượng (name là ID, tên đặt âm thanh)
+            SoundManager::setVolume(v);
             AXLOG("music percent: %d", s->getPercent());
-            DataSettingMusic::getInstance().setPercentVolume(s->getPercent());
         }
     });
     settingBoard->addChild(slider);
@@ -117,38 +113,38 @@ bool SettingBoard::init()
 // Chuyển đổi music
 void SettingBoard::toggleMusic()
 {
+    SoundManager::playEffect(AudioPaths::CLICK);
     isMuteMusic = !isMuteMusic;
-    DataSettingMusic::getInstance().toggleMusic();
+    SoundManager::getdataMusic()->toggleMusic();
     if(isMuteMusic)
     {
         AXLOG("Music Off");
         musicONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOff"));
-        AudioEngine::pauseAll();
+        SoundManager::pause_Music();
     }
     else
     {
         AXLOG("Music On");
         musicONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOn"));
-        AudioEngine::resumeAll();
+        SoundManager::resume_Music();
     }
 }
 
 // Chuyển đổi sfx
 void SettingBoard::toggleSFX()
 {
+    SoundManager::playEffect(AudioPaths::CLICK);
     isMuteSFX = !isMuteSFX;
-    DataSettingMusic::getInstance().toggleSFX();
+    SoundManager::getdataMusic()->toggleSFX();
     if(isMuteSFX)
     {
         AXLOG("SFX Off");
         sfxONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOff"));
-        AudioEngine::pauseAll();
     }
     else
     {
         AXLOG("SFX On");
         sfxONOFF->setTexture(SpriteManager::getInstance().getTextureByName("buttonOn"));
-        AudioEngine::resumeAll();
     }  
 }
 
@@ -163,6 +159,7 @@ void SettingBoard::onSetting()
     mobileButtons->pause();
     settingBoard->setVisible(true);
     buttonSettingInGame->setVisible(false);
+    SoundManager::playEffect(AudioPaths::CLICK);
 }
 
 // Quay lại trò chơi
@@ -176,6 +173,7 @@ void SettingBoard::onReturnScene()
     mobileButtons->resume();
     settingBoard->setVisible(false);
     buttonSettingInGame->setVisible(true);
+    SoundManager::playEffect(AudioPaths::CLICK);
 
 }
 
@@ -183,14 +181,16 @@ void SettingBoard::onReturnScene()
 void SettingBoard::onRestart()
 {
     AXLOG("Restart Level");
+    SoundManager::playEffect(AudioPaths::CLICK);
     this->onReturnScene();
-    SceneManager::restart_currentScene();
+    SceneManager::restart_currentScene();   
 }
 
 // Exit
 void SettingBoard::onReturnMainMenu()
 {
     AXLOG("Return Main Menu");
+    SoundManager::playEffect(AudioPaths::CLICK);
     this->onReturnScene();
-    SceneManager::create_and_replace_currentScene(SceneType::MainMenu_Scene);
+    SceneManager::create_and_replace_currentScene(SceneType::MainMenu_Scene); 
 }

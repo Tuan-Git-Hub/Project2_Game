@@ -3,13 +3,12 @@
 #include "UIManager.h"
 #include "LevelManager.h"
 #include "GameManager.h"
-#include "Player.h"
 #include "CollisionManager.h"
 #include "CameraController.h"
+#include "SoundManager.h"
+#include "GameObjectManager.h"
 
 using namespace ax;
-
-static int s_sceneID = 2000;
 
 bool Level_1_Scene::init()
 {
@@ -29,14 +28,15 @@ bool Level_1_Scene::init()
     //this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     // Chọn level để game manager tạo logic game
     GameManager::getInstance().selectLevel(GameManager::Level::LEVEL_1);
-
+    // Tạo âm thanh
+    SoundManager::playBackground(AudioPaths::LEVEL1_BACKGROUND, true);
     // Tạo map
     auto map = LevelManager::loadLevel(Level::LEVEL_1);
     map->setPosition(Vec2(0, 0));
     this->addChild(map);
 
     // Tạo player
-    auto player1 = Player::create();
+    auto player1 = GameObjectManager::createPlayer();
     player1->setPosition(Vec2(660, 110));
     this->addChild(player1, -1);
 

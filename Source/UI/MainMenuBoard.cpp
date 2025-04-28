@@ -1,6 +1,7 @@
 #include "MainMenuBoard.h"
 #include "SpriteManager.h"
 #include "SceneManager.h"
+#include "SoundManager.h"
 
 using namespace ax;
 
@@ -69,12 +70,14 @@ bool MainMenuBoard::init()
 void MainMenuBoard::onNewGame(Object* sender)
 {
     AXLOG("New Game!!");
+    SoundManager::playEffect(AudioPaths::CLICK);
     SceneManager::create_and_replace_currentScene(SceneType::Level_1_Scene);
 }
 
 void MainMenuBoard::onOptions(Object* sender)
 {
     AXLOG("Options clicked");
+    SoundManager::playEffect(AudioPaths::CLICK);
     this->setPosition(Vec2(1000, 1000));
     optionsBoard->setPosition(Vec2::ZERO - this->getPosition());
 }
@@ -82,11 +85,13 @@ void MainMenuBoard::onOptions(Object* sender)
 void MainMenuBoard::onLevels(Object* sender)
 {
     AXLOG("Levels clicked");
+    SoundManager::playEffect(AudioPaths::CLICK);
     this->setPosition(Vec2(1000, 1000));
     levelsBoard->setPosition(Vec2::ZERO - this->getPosition());
 }
 
 void MainMenuBoard::onExit(Object* sender)
 {
+    SoundManager::playEffect(AudioPaths::CLICK);
     _director->end();
 }
